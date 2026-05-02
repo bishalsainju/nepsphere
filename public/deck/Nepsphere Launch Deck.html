@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Nepsphere — A home for our community online</title>
+<link rel="stylesheet" href="deck.css">
+<script src="deck-stage.js"></script>
+<script type="application/json" id="speaker-notes">
+[
+  "Cover — pause. 'Nepsphere is here.' Built for our community in Dallas and across the US.",
+  "Why we built this — the FB groups have done so much. But threads scroll away, posts get lost, scams creep in. We deserve a real home — warm, organized, ours.",
+  "The promise — three pillars: a feed that respects you, real people only, hyper-local first. Read each one slowly.",
+  "Where it lives — Dallas first. Then Houston, NYC, Boston, Bay Area. Your chapter is your home base — but you can pop into others.",
+  "Community — the feed. Like the FB group, but with categories, verified people, and a 'this week' panel for events. Show the Dashain dinner card.",
+  "Rooms — instead of one giant feed, we have rooms. Dallas-Fort Worth has its own. F1 students. Mothers. Foodies. Join what fits.",
+  "Connect — friendships, dating, marriage. Three colors, three intents — clearly separated. No one accidentally swiped on an aunty looking for a chai friend.",
+  "Jobs — real jobs from community members. Visa sponsorship roles get a badge. Part-time gigs, restaurant shifts, full-time engineering — all here.",
+  "Verified — government ID + selfie. We do the work so you don't worry. The orange check means a real person stood in front of a phone.",
+  "Local-first — the geo bar at the top is the spine of the app. Dallas first. Then your country. Then global. You always know where you are.",
+  "Built with you — every feature came from a request in one of the FB groups. We'll keep building that way. Suggest, vote, ship.",
+  "Free, forever — the basics will always be free. No ads. No selling your data. Verification is free. Posting is free. We may add premium features later — basics stay free.",
+  "How to join — three FB groups, three ways in. Pinned post + comment + DM. Pick whichever feels easiest. We'll get you set up in 60 seconds.",
+  "The first week — what to do. Verify, join two rooms, post a hello. That's it. The rest comes naturally.",
+  "Dhanyabad. Built with love by Nepalis, for Nepalis. See you in the app."
+]
+</script>
+</head>
+<body>
+<deck-stage>
+
+<!-- 01 — Cover ============================================================ -->
+<section data-screen-label="01 Cover" class="slide dark" style="padding: 0;">
+  <div class="flag-stripe top"></div>
+  <div style="position:absolute; inset:0; background-image:url('../assets/topo-pattern.svg'); background-size: 600px; opacity: 0.06;"></div>
+
+  <div style="display:flex; flex-direction:column; justify-content:space-between; padding: 120px; width: 100%; position: relative; z-index: 2;">
+    <div style="display:flex; align-items:center; gap: 18px;">
+      <svg width="68" height="68" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="30" fill="#1E3A8A"></circle>
+        <circle cx="32" cy="32" r="26" fill="#FAFAF7"></circle>
+        <path d="M10 44 L22 24 L29 34 L38 18 L54 44 Z" fill="#1E3A8A"></path>
+        <circle cx="42" cy="22" r="5" fill="#DC2626"></circle>
+      </svg>
+      <span class="word" style="color: #FAFAF7;">Nepsphere</span>
+    </div>
+
+    <div>
+      <div class="eyebrow" style="margin-bottom: 28px;">A launch · May 2026</div>
+      <h1 class="display" style="color: #FAFAF7;">A home for<br>our community<br>online.</h1>
+      <p style="font-size: 38px; margin-top: 48px; max-width: 980px; color: rgba(250,246,239,0.78);">
+        Built for the Nepali diaspora in Dallas, across the US, and everywhere we're putting down roots.
+      </p>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; color: rgba(250,246,239,0.55); font-size: 22px;">
+      <span class="deva" style="font-size: 28px;">नमस्ते</span>
+      <span>nepsphere.com</span>
+    </div>
+  </div>
+  <div class="flag-stripe bottom"></div>
+</section>
+
+<!-- 02 — Why we built this =============================================== -->
+<section data-screen-label="02 Why" class="slide cream" style="padding: 140px 160px; flex-direction: column; justify-content: center; gap: 60px;">
+  <div class="eyebrow">Why we built this</div>
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start;">
+    <div>
+      <h1 class="big">The Facebook groups<br>did so much.<br><span style="color: var(--primary-600);">We can do more.</span></h1>
+    </div>
+    <div style="display:flex; flex-direction:column; gap: 32px; padding-top: 24px;">
+      <p class="lede" style="margin: 0;">For years, three groups carried us — apartment hunts, ride shares, Dashain plates, F1 advice, lost passports found in 20 minutes.</p>
+      <p class="lede" style="margin: 0;">But threads scroll away. Posts get buried. Scammers slip in. The same questions get asked every Tuesday.</p>
+      <p class="lede" style="margin: 0; color: var(--fg-1); font-weight: 600;">We deserve a real home.<br>Warm. Organized. Ours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 — Three pillars =================================================== -->
+<section data-screen-label="03 Pillars" class="slide" style="padding: 130px 140px; flex-direction: column; justify-content: center; gap: 70px;">
+  <div>
+    <div class="eyebrow">The promise</div>
+    <h1 class="big" style="margin-top: 18px;">Three things we'll always be.</h1>
+  </div>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="num">01</div>
+      <h3>Local-first.</h3>
+      <p style="font-size: 24px; margin: 0;">Dallas before USA. USA before global. Your chapter is the front door — not an afterthought tucked under a filter.</p>
+    </div>
+    <div class="pillar" style="background: var(--primary-50); border-color: var(--primary-200);">
+      <div class="num">02</div>
+      <h3>Real people only.</h3>
+      <p style="font-size: 24px; margin: 0;">Every member is verified with government ID + selfie. The orange check means someone we trust stood behind that profile.</p>
+    </div>
+    <div class="pillar">
+      <div class="num">03</div>
+      <h3>Free, with respect.</h3>
+      <p style="font-size: 24px; margin: 0;">No ads. No selling your data. The basics — posting, joining rooms, verification — stay free forever.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 — Where it lives ================================================== -->
+<section data-screen-label="04 Cities" class="slide dark" style="padding: 130px 160px; flex-direction: column; justify-content: center; gap: 80px;">
+  <div>
+    <div class="eyebrow">Where it lives</div>
+    <h1 class="big" style="color: #FAFAF7; margin-top: 18px;">Dallas first.<br><span style="color: var(--saffron-300);">Then everywhere we are.</span></h1>
+  </div>
+  <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 20px;">
+    <div style="background: var(--primary-600); color: #FFF; border-radius: 18px; padding: 32px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 8px 30px rgba(234,88,12,0.4);">
+      <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.85;">Live now</div>
+      <div style="font-family: var(--font-display); font-weight: 800; font-size: 40px;">Dallas</div>
+      <div style="font-size: 18px; opacity: 0.9;">Plano · Irving · Frisco</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 32px; display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--saffron-300);">Summer ‘26</div>
+      <div style="font-family: var(--font-display); font-weight: 800; font-size: 40px; color:#FAFAF7;">Houston</div>
+      <div style="font-size: 18px; color: rgba(250,246,239,0.6);">Texas chapter</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 32px; display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--saffron-300);">Summer ‘26</div>
+      <div style="font-family: var(--font-display); font-weight: 800; font-size: 40px; color:#FAFAF7;">NYC</div>
+      <div style="font-size: 18px; color: rgba(250,246,239,0.6);">Queens · Jersey City</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 32px; display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--saffron-300);">Fall ‘26</div>
+      <div style="font-family: var(--font-display); font-weight: 800; font-size: 40px; color:#FAFAF7;">Boston</div>
+      <div style="font-size: 18px; color: rgba(250,246,239,0.6);">Cambridge · Quincy</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 32px; display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--saffron-300);">Fall ‘26</div>
+      <div style="font-family: var(--font-display); font-weight: 800; font-size: 40px; color:#FAFAF7;">Bay Area</div>
+      <div style="font-size: 18px; color: rgba(250,246,239,0.6);">SF · San Jose</div>
+    </div>
+  </div>
+  <p style="font-size: 26px; color: rgba(250,246,239,0.65); max-width: 1200px;">Your chapter is your home base. But you can drop into any other city — say hi to a cousin in Boston, find a roommate in NYC.</p>
+</section>
+
+<!-- 05 — Community feed mock ============================================ -->
+<section data-screen-label="05 Community" class="slide" style="padding: 100px 0 100px 140px; flex-direction: row; gap: 80px; align-items: center;">
+  <div style="flex: 0 0 620px; display:flex; flex-direction: column; gap: 36px;">
+    <div class="eyebrow">Product · Community</div>
+    <h1 class="big">A feed that<br>doesn't scroll<br>past you.</h1>
+    <p class="lede" style="margin: 0;">Categories, verified people, and a "this week" panel for events. Like the FB group — but organized.</p>
+    <div style="display:flex; flex-direction:column; gap: 16px; padding-top: 8px;">
+      <div style="display:flex; gap: 14px; align-items: center;">
+        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary-600);"></div>
+        <span style="font-size: 24px; color: var(--fg-1); font-weight: 600;">Filter by category — housing, jobs, events, lost & found</span>
+      </div>
+      <div style="display:flex; gap: 14px; align-items: center;">
+        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary-600);"></div>
+        <span style="font-size: 24px; color: var(--fg-1); font-weight: 600;">Posts from verified members get a check</span>
+      </div>
+      <div style="display:flex; gap: 14px; align-items: center;">
+        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary-600);"></div>
+        <span style="font-size: 24px; color: var(--fg-1); font-weight: 600;">Search that actually finds the apartment thread</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Browser mock -->
+  <div class="mock-frame" style="flex: 1; margin-right: 80px; max-width: 1100px; height: 820px;">
+    <div class="mock-chrome">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <div class="url">nepsphere.com/community</div>
+    </div>
+    <!-- shell -->
+    <div style="background: rgba(255,255,255,0.92); border-bottom: 1px solid var(--border); padding: 12px 28px; display: flex; align-items: center; gap: 18px;">
+      <div style="display:flex; align-items:center; gap: 10px;">
+        <svg width="28" height="28" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#1E3A8A"/><circle cx="32" cy="32" r="26" fill="#FAFAF7"/><path d="M10 44 L22 24 L29 34 L38 18 L54 44 Z" fill="#1E3A8A"/><circle cx="42" cy="22" r="5" fill="#DC2626"/></svg>
+        <span style="font-family: var(--font-display); font-weight: 800; font-size: 18px;">Nepsphere</span>
+      </div>
+      <div style="display:flex; gap:4px; margin-left: 12px;">
+        <span style="font-size:14px; padding:6px 12px; border-radius:8px; background: var(--primary-50); color: var(--primary); font-weight: 600;">Community</span>
+        <span style="font-size:14px; padding:6px 12px; color: var(--fg-3);">Rooms</span>
+        <span style="font-size:14px; padding:6px 12px; color: var(--fg-3);">Connect</span>
+        <span style="font-size:14px; padding:6px 12px; color: var(--fg-3);">Jobs</span>
+      </div>
+      <div style="margin-left:auto; display:flex; gap: 12px; align-items: center;">
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2);"></div>
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-600), var(--primary-400));"></div>
+      </div>
+    </div>
+    <!-- geo bar -->
+    <div style="padding: 10px 28px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid var(--border-subtle); background: #FFF;">
+      <span style="padding:6px 12px; border-radius:8px; background: var(--primary-600); color: white; font-size: 13px; font-weight: 600;">📍 Dallas</span>
+      <span style="color: var(--border-strong); font-size:12px;">›</span>
+      <span style="padding:6px 12px; border-radius:8px; background: var(--surface-2); font-size: 13px; font-weight: 600;">🇺🇸 USA</span>
+      <span style="color: var(--border-strong); font-size:12px;">›</span>
+      <span style="padding:6px 12px; border-radius:8px; background: var(--surface-2); font-size: 13px; font-weight: 600;">🌐 Global</span>
+      <span style="margin-left: auto; font-size: 13px; color: var(--fg-3);">2,847 members in Dallas</span>
+    </div>
+    <!-- content -->
+    <div style="display: grid; grid-template-columns: 180px 1fr 220px; gap: 20px; padding: 24px; background: var(--bg);">
+      <!-- left rail -->
+      <div style="display:flex; flex-direction:column; gap: 4px;">
+        <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 6px;">Categories</div>
+        <div style="padding: 7px 10px; background: var(--primary-50); color: var(--primary); border-radius: 8px; font-size: 13px; font-weight: 600;">All posts</div>
+        <div style="padding: 7px 10px; font-size: 13px; color: var(--fg-2);">🏠 Housing</div>
+        <div style="padding: 7px 10px; font-size: 13px; color: var(--fg-2);">💼 Jobs</div>
+        <div style="padding: 7px 10px; font-size: 13px; color: var(--fg-2);">🎉 Events</div>
+        <div style="padding: 7px 10px; font-size: 13px; color: var(--fg-2);">🚗 Rideshare</div>
+        <div style="padding: 7px 10px; font-size: 13px; color: var(--fg-2);">🍲 Food</div>
+        <div style="padding: 7px 10px; font-size: 13px; color: var(--fg-2);">📋 Lost & found</div>
+      </div>
+      <!-- center feed -->
+      <div style="display:flex; flex-direction:column; gap: 14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-family: var(--font-display); font-weight: 700; font-size: 22px;">Community · Dallas</div>
+          <div style="display:flex; gap:8px;">
+            <span style="background: var(--primary-600); color: white; padding: 6px 12px; border-radius:6px; font-size: 12px; font-weight: 600;">+ Post</span>
+          </div>
+        </div>
+        <!-- Post 1 -->
+        <div style="background: white; border:1px solid var(--border); border-radius: 12px; padding: 16px; display:flex; flex-direction:column; gap: 10px;">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div style="width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #FED7AA, #EA580C); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:13px;">PS</div>
+            <div>
+              <div style="font-weight:600; font-size:13px; display:flex; gap:5px; align-items:center;">Priya Shrestha <svg width="11" height="11" viewBox="0 0 16 16" fill="#DC2626"><path d="M8 0l2 2 3-1 1 3 2 2-2 2 1 3-3 1-2 2-2-2-3 1-1-3-2-2 2-2-1-3 3 1z"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div style="font-size: 11px; color: var(--fg-3);">2h ago · 🏠 Housing</div>
+            </div>
+          </div>
+          <div style="font-weight:700; font-size: 15px;">Roommate wanted — Plano, walking distance to DART</div>
+          <p style="font-size: 12px; color: var(--fg-2); line-height: 1.5; margin: 0;">2BR/2BA, $850/mo + utilities. Vegetarian-friendly kitchen. Looking for someone clean, quiet, ideally a grad student or working professional.</p>
+          <div style="display:flex; gap:18px; font-size:11px; color: var(--fg-3); padding-top: 4px; border-top: 1px solid var(--border-subtle);">
+            <span>♡ 24</span><span>💬 8</span><span>↗ Share</span>
+          </div>
+        </div>
+        <!-- Post 2 -->
+        <div style="background: white; border:1px solid var(--border); border-radius: 12px; padding: 16px; display:flex; flex-direction:column; gap: 10px;">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div style="width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #FBBF24, #B45309); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:13px;">RB</div>
+            <div>
+              <div style="font-weight:600; font-size:13px; display:flex; gap:5px; align-items:center;">Ramesh Bhattarai <svg width="11" height="11" viewBox="0 0 16 16" fill="#DC2626"><path d="M8 0l2 2 3-1 1 3 2 2-2 2 1 3-3 1-2 2-2-2-3 1-1-3-2-2 2-2-1-3 3 1z"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div style="font-size: 11px; color: var(--fg-3);">5h ago · 🎉 Events</div>
+            </div>
+          </div>
+          <div style="font-weight:700; font-size: 15px;">Dashain dinner — Saturday, Klyde Warren Park</div>
+          <p style="font-size: 12px; color: var(--fg-2); line-height: 1.5; margin: 0;">Bringing momos and sel roti. Anyone want to join? Will be there from 6pm.</p>
+          <div style="display:flex; gap:18px; font-size:11px; color: var(--fg-3); padding-top: 4px; border-top: 1px solid var(--border-subtle);">
+            <span>♡ 87</span><span>💬 32</span><span>↗ Share</span>
+          </div>
+        </div>
+      </div>
+      <!-- right rail -->
+      <div style="display:flex; flex-direction:column; gap: 12px;">
+        <div style="background:white; border:1px solid var(--border); border-radius:12px; padding: 14px;">
+          <div style="font-family: var(--font-display); font-weight: 700; font-size: 14px; margin-bottom: 10px;">This week</div>
+          <div style="display:flex; gap: 8px; align-items: stretch; margin-bottom: 10px;">
+            <div style="width: 3px; background: var(--crimson-500); border-radius: 2px; flex-shrink: 0;"></div>
+            <div>
+              <div style="font-size: 11px; font-weight: 600;">Dashain dinner</div>
+              <div style="font-size: 10px; color: var(--fg-3);">Sat · Klyde Warren</div>
+            </div>
+          </div>
+          <div style="display:flex; gap: 8px; align-items: stretch;">
+            <div style="width: 3px; background: var(--saffron-500); border-radius: 2px; flex-shrink: 0;"></div>
+            <div>
+              <div style="font-size: 11px; font-weight: 600;">F1 students mixer</div>
+              <div style="font-size: 10px; color: var(--fg-3);">Sun · UTD campus</div>
+            </div>
+          </div>
+        </div>
+        <div style="background: var(--primary-50); border: 1px solid var(--primary-200); border-radius:12px; padding: 14px;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--primary-800); margin-bottom: 4px;">Welcome, friend</div>
+          <div style="font-size: 10px; color: var(--primary-800); line-height: 1.5;">Verify your account to post and message.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 — Rooms ========================================================== -->
+<section data-screen-label="06 Rooms" class="slide cream" style="padding: 130px 140px; flex-direction: column; justify-content: center; gap: 70px;">
+  <div style="display:flex; justify-content: space-between; align-items: end; gap: 60px;">
+    <div>
+      <div class="eyebrow">Product · Rooms</div>
+      <h1 class="big" style="margin-top: 18px;">One feed is too big.<br><span style="color: var(--primary-600);">Rooms are just right.</span></h1>
+    </div>
+    <p class="lede" style="margin: 0; max-width: 560px;">Group chats organized by city, life stage, or interest. Join what fits — leave what doesn't.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+    <div style="background:#FFF; border:1px solid var(--border); border-radius: 20px; padding: 32px; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-size: 12px; font-weight:700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary-600);">Cities</div>
+      <h3 style="font-size: 28px;">Dallas-Fort Worth</h3>
+      <p style="font-size: 18px; margin: 0;">Apartments, restaurants, school zones — local talk only.</p>
+      <div style="display:flex; gap:6px; margin-top: 8px;">
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #FED7AA, #EA580C); border: 2px solid #FFF;"></div>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #FBBF24, #B45309); border: 2px solid #FFF; margin-left: -8px;"></div>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #FECACA, #DC2626); border: 2px solid #FFF; margin-left: -8px;"></div>
+        <span style="font-size: 14px; color: var(--fg-3); align-self: center; margin-left: 6px;">847 members</span>
+      </div>
+    </div>
+    <div style="background:#FFF; border:1px solid var(--border); border-radius: 20px; padding: 32px; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-size: 12px; font-weight:700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--crimson-500);">Life stage</div>
+      <h3 style="font-size: 28px;">F1 students</h3>
+      <p style="font-size: 18px; margin: 0;">CPT, OPT, course load, the unwritten rules — figure it out together.</p>
+      <div style="display:flex; gap:6px; margin-top: 8px;">
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #BFDBFE, #1E3A8A); border: 2px solid #FFF;"></div>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #FED7AA, #EA580C); border: 2px solid #FFF; margin-left: -8px;"></div>
+        <span style="font-size: 14px; color: var(--fg-3); align-self: center; margin-left: 6px;">312 members</span>
+      </div>
+    </div>
+    <div style="background:#FFF; border:1px solid var(--border); border-radius: 20px; padding: 32px; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-size: 12px; font-weight:700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--emerald-500);">Life stage</div>
+      <h3 style="font-size: 28px;">Aamaa group</h3>
+      <p style="font-size: 18px; margin: 0;">For mothers raising Nepali kids in America. Bilingual playdates, recipes, school advice.</p>
+      <div style="display:flex; gap:6px; margin-top: 8px;">
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #BBF7D0, #059669); border: 2px solid #FFF;"></div>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #FECACA, #DC2626); border: 2px solid #FFF; margin-left: -8px;"></div>
+        <span style="font-size: 14px; color: var(--fg-3); align-self: center; margin-left: 6px;">156 members</span>
+      </div>
+    </div>
+    <div style="background:#FFF; border:1px solid var(--border); border-radius: 20px; padding: 32px; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-size: 12px; font-weight:700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--saffron-700);">Interest</div>
+      <h3 style="font-size: 28px;">Foodies</h3>
+      <p style="font-size: 18px; margin: 0;">Where to find good gundruk, sel roti orders, momo pop-ups, recipe swaps.</p>
+      <div style="display:flex; gap:6px; margin-top: 8px;">
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #FEF3C7, #B45309); border: 2px solid #FFF;"></div>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #FED7AA, #EA580C); border: 2px solid #FFF; margin-left: -8px;"></div>
+        <span style="font-size: 14px; color: var(--fg-3); align-self: center; margin-left: 6px;">203 members</span>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size: 24px; color: var(--fg-3); text-align: center; margin: 0;">Plus rooms for runners, hikers, parents, professionals, devotees, gamers — and yours, if it doesn't exist yet.</p>
+</section>
+
+<!-- 07 — Connect ======================================================== -->
+<section data-screen-label="07 Connect" class="slide" style="padding: 130px 140px; flex-direction: column; justify-content: center; gap: 60px;">
+  <div style="display:flex; justify-content: space-between; align-items: end; gap: 60px;">
+    <div>
+      <div class="eyebrow">Product · Connect</div>
+      <h1 class="big" style="margin-top: 18px;">Three intents.<br>Never confused.</h1>
+    </div>
+    <p class="lede" style="margin: 0; max-width: 560px;">Pick what you're here for. We'll only show you people looking for the same thing.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 32px;">
+    <!-- Friendship -->
+    <div style="border-radius: 24px; overflow: hidden; border: 2px solid #3B82F6; box-shadow: 0 20px 50px rgba(59,130,246,0.18);">
+      <div style="background: linear-gradient(135deg, #DBEAFE, #3B82F6); height: 200px; position: relative; display: flex; align-items: center; justify-content: center;">
+        <div style="background: #3B82F6; color: white; padding: 8px 18px; border-radius: 9999px; font-weight: 700; font-size: 18px;">Friendship</div>
+      </div>
+      <div style="padding: 36px; display:flex; flex-direction: column; gap: 16px;">
+        <h3 style="font-size: 32px;">Make a chai friend.</h3>
+        <p style="font-size: 22px; margin: 0;">For new arrivals, lonely weekends, or anyone wanting platonic Nepali friends nearby. No pressure, no pretending.</p>
+      </div>
+    </div>
+    <!-- Dating -->
+    <div style="border-radius: 24px; overflow: hidden; border: 2px solid #E31C5F; box-shadow: 0 20px 50px rgba(227,28,95,0.18);">
+      <div style="background: linear-gradient(135deg, #FECACA, #E31C5F); height: 200px; display: flex; align-items: center; justify-content: center;">
+        <div style="background: #E31C5F; color: white; padding: 8px 18px; border-radius: 9999px; font-weight: 700; font-size: 18px;">Dating</div>
+      </div>
+      <div style="padding: 36px; display:flex; flex-direction: column; gap: 16px;">
+        <h3 style="font-size: 32px;">Meet someone real.</h3>
+        <p style="font-size: 22px; margin: 0;">Verified profiles, clear intentions, no ghosts. For grown-ups who'd like dinner with someone who gets the family WhatsApp.</p>
+      </div>
+    </div>
+    <!-- Marriage -->
+    <div style="border-radius: 24px; overflow: hidden; border: 2px solid #0E9F6E; box-shadow: 0 20px 50px rgba(14,159,110,0.18);">
+      <div style="background: linear-gradient(135deg, #BBF7D0, #0E9F6E); height: 200px; display: flex; align-items: center; justify-content: center;">
+        <div style="background: #0E9F6E; color: white; padding: 8px 18px; border-radius: 9999px; font-weight: 700; font-size: 18px;">Marriage</div>
+      </div>
+      <div style="padding: 36px; display:flex; flex-direction: column; gap: 16px;">
+        <h3 style="font-size: 32px;">For something serious.</h3>
+        <p style="font-size: 22px; margin: 0;">Family-aware, intention-clear. Background sections for caste, dietary, language preferences — only if you choose to share.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; align-items: center; gap: 16px; padding: 18px 28px; background: var(--saffron-100); border: 1px solid var(--saffron-300); border-radius: 14px;">
+    <span style="font-size: 32px;">⚠</span>
+    <p style="margin: 0; font-size: 22px; color: var(--saffron-700); font-weight: 600;">No one accidentally swiped on an aunty looking for a chai friend. Intent isolation is a feature.</p>
+  </div>
+</section>
+
+<!-- 08 — Jobs =========================================================== -->
+<section data-screen-label="08 Jobs" class="slide dark" style="padding: 100px 0 100px 140px; flex-direction: row; gap: 80px; align-items: center;">
+  <div style="flex: 0 0 620px; display:flex; flex-direction: column; gap: 36px;">
+    <div class="eyebrow">Product · Jobs</div>
+    <h1 class="big" style="color: #FAFAF7;">Real jobs<br>from real people<br>in our community.</h1>
+    <p class="lede" style="margin: 0; color: rgba(250,246,239,0.78);">Visa sponsorship roles, weekend shifts, full-time engineering. Posted by community members or vetted employers.</p>
+    <div style="display:flex; flex-direction:column; gap: 16px;">
+      <div style="display:flex; gap: 14px; align-items: center;">
+        <div style="background: var(--crimson-500); color: white; padding: 4px 12px; border-radius: 9999px; font-size: 13px; font-weight: 700;">Sponsorship</div>
+        <span style="font-size: 22px; color: rgba(250,246,239,0.85);">badge for visa-sponsored roles</span>
+      </div>
+      <div style="display:flex; gap: 14px; align-items: center;">
+        <div style="background: var(--saffron-500); color: var(--warm-900); padding: 4px 12px; border-radius: 9999px; font-size: 13px; font-weight: 700;">Community</div>
+        <span style="font-size: 22px; color: rgba(250,246,239,0.85);">posted by someone in your chapter</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Browser mock -->
+  <div class="mock-frame" style="flex: 1; margin-right: 80px; max-width: 1100px; height: 820px;">
+    <div class="mock-chrome">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <div class="url">nepsphere.com/jobs</div>
+    </div>
+    <div style="background: var(--bg); padding: 28px; height: calc(100% - 36px); display: flex; flex-direction: column; gap: 18px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-family: var(--font-display); font-weight: 700; font-size: 28px;">Jobs · Dallas</div>
+          <div style="font-size: 14px; color: var(--fg-3);">Opportunities shared by your community</div>
+        </div>
+        <div style="display:flex; gap: 8px;">
+          <span style="padding:6px 14px; background: var(--crimson-50); color: var(--crimson-700); border-radius: 9999px; font-size: 13px; font-weight: 600;">Sponsorship ✓</span>
+          <span style="padding:6px 14px; background: white; border: 1px solid var(--border); border-radius: 9999px; font-size: 13px; font-weight: 600;">Remote OK</span>
+          <span style="padding:6px 14px; background: white; border: 1px solid var(--border); border-radius: 9999px; font-size: 13px; font-weight: 600;">Community-posted</span>
+        </div>
+      </div>
+
+      <!-- Job 1 -->
+      <div style="background: white; border:1px solid var(--border); border-radius: 14px; padding: 22px; display:flex; flex-direction: column; gap: 12px;">
+        <div style="display:flex; gap: 14px; align-items: flex-start;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #EA580C; display:flex; align-items:center; justify-content: center; color: white; font-weight: 800; font-size: 16px;">CB</div>
+          <div style="flex: 1;">
+            <div style="font-weight: 700; font-size: 18px;">Backend engineer</div>
+            <div style="font-size: 14px; color: var(--fg-3);">Coalbase · Dallas, TX · Remote OK</div>
+          </div>
+          <div style="display:flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+            <span style="background: var(--crimson-50); color: var(--crimson-700); padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700;">Sponsorship</span>
+          </div>
+        </div>
+        <p style="font-size: 14px; color: var(--fg-2); margin: 0; line-height: 1.55;">Posted by a community member. Visa sponsorship available for senior roles. Apply directly through the company.</p>
+        <div style="display:flex; align-items: center; gap: 12px; font-size: 13px; color: var(--fg-3);">
+          <span style="font-weight: 700; color: var(--fg-1);">$140k–180k</span>
+          <span>·</span>
+          <span>4d ago</span>
+          <span>·</span>
+          <span style="display:inline-flex; align-items:center; gap: 6px;">
+            <span style="width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, #FED7AA, #EA580C);"></span>
+            Bibek K.
+          </span>
+          <span style="margin-left: auto; background: var(--primary-600); color: white; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;">Apply →</span>
+        </div>
+      </div>
+
+      <!-- Job 2 -->
+      <div style="background: white; border:1px solid var(--border); border-radius: 14px; padding: 22px; display:flex; flex-direction: column; gap: 12px;">
+        <div style="display:flex; gap: 14px; align-items: flex-start;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #0E9F6E; display:flex; align-items:center; justify-content: center; color: white; font-weight: 800; font-size: 16px;">LR</div>
+          <div style="flex: 1;">
+            <div style="font-weight: 700; font-size: 18px;">Part-time delivery (weekends)</div>
+            <div style="font-size: 14px; color: var(--fg-3);">Local restaurant · Irving, TX</div>
+          </div>
+          <div style="display:flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+            <span style="background: var(--surface-2); color: var(--fg-2); padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600;">Contract</span>
+          </div>
+        </div>
+        <p style="font-size: 14px; color: var(--fg-2); margin: 0; line-height: 1.55;">Friday–Sunday evenings. Cash tips. Owner is in the Dallas chapter.</p>
+        <div style="display:flex; align-items: center; gap: 12px; font-size: 13px; color: var(--fg-3);">
+          <span style="font-weight: 700; color: var(--fg-1);">$22/hr + tips</span>
+          <span>·</span>
+          <span>2d ago</span>
+          <span>·</span>
+          <span style="display:inline-flex; align-items:center; gap: 6px;">
+            <span style="width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, #FECACA, #DC2626);"></span>
+            Anita S.
+          </span>
+          <span style="margin-left: auto; background: var(--primary-600); color: white; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;">Apply →</span>
+        </div>
+      </div>
+
+      <!-- Job 3 -->
+      <div style="background: white; border:1px solid var(--border); border-radius: 14px; padding: 22px; display:flex; flex-direction: column; gap: 12px;">
+        <div style="display:flex; gap: 14px; align-items: flex-start;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #1E3A8A; display:flex; align-items:center; justify-content: center; color: white; font-weight: 800; font-size: 16px;">TC</div>
+          <div style="flex: 1;">
+            <div style="font-weight: 700; font-size: 18px;">Senior data analyst</div>
+            <div style="font-size: 14px; color: var(--fg-3);">Toyota Connected · Plano, TX</div>
+          </div>
+          <div style="display:flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+            <span style="background: var(--crimson-50); color: var(--crimson-700); padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700;">Sponsorship</span>
+          </div>
+        </div>
+        <p style="font-size: 14px; color: var(--fg-2); margin: 0; line-height: 1.55;">Mature team, predictable hours. Looking for someone with healthcare data experience.</p>
+        <div style="display:flex; align-items: center; gap: 12px; font-size: 13px; color: var(--fg-3);">
+          <span style="font-weight: 700; color: var(--fg-1);">$110k–135k</span>
+          <span>·</span>
+          <span>1w ago</span>
+          <span style="margin-left: auto; background: var(--primary-600); color: white; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;">Apply →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 — Verified ======================================================= -->
+<section data-screen-label="09 Verified" class="slide cream" style="padding: 130px 160px; flex-direction: row; align-items: center; gap: 100px;">
+  <div style="flex: 1; display:flex; flex-direction: column; gap: 36px;">
+    <div class="eyebrow">Trust</div>
+    <h1 class="big">The orange check<br>means a real person.</h1>
+    <p class="lede" style="margin: 0;">Government ID + selfie. We do the work — once, in 60 seconds — so you never wonder if you're talking to a bot, a scammer, or someone's cousin from 2014.</p>
+    <div style="display:flex; flex-direction: column; gap: 16px;">
+      <div style="display:flex; gap: 16px; align-items: center;">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary-600); display:flex; align-items:center; justify-content:center; color: white; font-weight: 800;">✓</span>
+        <span style="font-size: 24px; font-weight: 600;">Required to message in Connect</span>
+      </div>
+      <div style="display:flex; gap: 16px; align-items: center;">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary-600); display:flex; align-items:center; justify-content:center; color: white; font-weight: 800;">✓</span>
+        <span style="font-size: 24px; font-weight: 600;">Required to post jobs or apartments</span>
+      </div>
+      <div style="display:flex; gap: 16px; align-items: center;">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary-600); display:flex; align-items:center; justify-content:center; color: white; font-weight: 800;">✓</span>
+        <span style="font-size: 24px; font-weight: 600;">Always free. Stays free.</span>
+      </div>
+    </div>
+  </div>
+  <div style="flex: 0 0 580px; display: flex; flex-direction: column; gap: 24px; align-items: center;">
+    <div style="background: white; border-radius: 28px; padding: 56px; box-shadow: 0 30px 80px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; gap: 24px; width: 100%;">
+      <div style="width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(135deg, #FED7AA, #EA580C); position: relative;">
+        <div style="position: absolute; bottom: -4px; right: -4px; width: 52px; height: 52px; background: var(--primary-600); border: 6px solid white; border-radius: 50%; display:flex; align-items:center; justify-content:center; color: white; font-size: 22px; font-weight: 900;">✓</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-family: var(--font-display); font-weight: 800; font-size: 32px;">Priya Shrestha</div>
+        <div style="font-size: 18px; color: var(--fg-3); margin-top: 4px;">Plano · MS in CS, UTD</div>
+      </div>
+      <div style="background: var(--primary-50); border: 1px solid var(--primary-200); border-radius: 12px; padding: 14px 20px; display:flex; gap: 10px; align-items: center;">
+        <span style="color: var(--primary-600); font-weight: 800;">✓</span>
+        <span style="font-size: 16px; font-weight: 600; color: var(--primary-800);">Verified · 12 Apr 2026</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 — Local-first ==================================================== -->
+<section data-screen-label="10 Local" class="slide" style="padding: 130px 140px; flex-direction: column; justify-content: center; gap: 70px;">
+  <div>
+    <div class="eyebrow">Local-first</div>
+    <h1 class="big" style="margin-top: 18px;">You always know<br><span style="color: var(--primary-600);">where you are.</span></h1>
+  </div>
+  <div style="background: white; border: 1px solid var(--border); border-radius: 24px; padding: 48px; display: flex; flex-direction: column; gap: 32px; box-shadow: var(--shadow-md);">
+    <div style="display:flex; gap: 14px; align-items: center;">
+      <span style="padding:14px 24px; border-radius:14px; background: var(--primary-600); color: white; font-size: 28px; font-weight: 700;">📍 Dallas</span>
+      <span style="color: var(--border-strong); font-size: 32px;">›</span>
+      <span style="padding:14px 24px; border-radius:14px; background: var(--surface-2); font-size: 28px; font-weight: 700;">🇺🇸 USA</span>
+      <span style="color: var(--border-strong); font-size: 32px;">›</span>
+      <span style="padding:14px 24px; border-radius:14px; background: var(--surface-2); font-size: 28px; font-weight: 700;">🌐 Global</span>
+    </div>
+    <p style="font-size: 28px; margin: 0; max-width: 1300px;">The geo bar is the spine of the app. Tap your city to see only Dallas posts. Tap USA to expand. Global if you're feeling broad. Your context is always one tap away — never buried in a menu.</p>
+  </div>
+</section>
+
+<!-- 11 — Built with you ================================================= -->
+<section data-screen-label="11 Built with you" class="slide orange" style="padding: 140px 160px; flex-direction: column; justify-content: center; gap: 60px; position: relative; overflow: hidden;">
+  <div style="position:absolute; right: -100px; top: -100px; width: 600px; height: 600px; border-radius: 50%; background: rgba(255,255,255,0.06);"></div>
+  <div style="position:absolute; right: 100px; bottom: -200px; width: 400px; height: 400px; border-radius: 50%; background: rgba(255,255,255,0.06);"></div>
+  <div style="position: relative; z-index: 2;">
+    <div class="eyebrow" style="color: rgba(255,255,255,0.85);">Built with you</div>
+    <h1 class="big" style="color: white; margin-top: 18px; max-width: 1400px;">Every feature came from a thread<br>in one of your groups.</h1>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; position: relative; z-index: 2;">
+    <div style="background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 36px;">
+      <div style="font-size: 64px; line-height: 1;">"</div>
+      <p style="margin: 0; font-size: 22px; color: white; line-height: 1.5;">Why is the apartment thread always 800 comments deep?</p>
+      <div style="margin-top: 16px; font-size: 14px; color: rgba(255,255,255,0.75); font-weight: 600;">→ Became Rooms.</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 36px;">
+      <div style="font-size: 64px; line-height: 1;">"</div>
+      <p style="margin: 0; font-size: 22px; color: white; line-height: 1.5;">Can we please separate friend-finding from dating?</p>
+      <div style="margin-top: 16px; font-size: 14px; color: rgba(255,255,255,0.75); font-weight: 600;">→ Became Connect intents.</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 36px;">
+      <div style="font-size: 64px; line-height: 1;">"</div>
+      <p style="margin: 0; font-size: 22px; color: white; line-height: 1.5;">Some "jobs" are just MLM scams. Can we vet them?</p>
+      <div style="margin-top: 16px; font-size: 14px; color: rgba(255,255,255,0.75); font-weight: 600;">→ Became verified Jobs.</div>
+    </div>
+  </div>
+  <p style="font-size: 28px; color: white; margin: 0; position: relative; z-index: 2; font-weight: 600;">Suggest. Vote. We ship. That's the only way this works.</p>
+</section>
+
+<!-- 12 — Free, with respect ============================================= -->
+<section data-screen-label="12 Free" class="slide" style="padding: 130px 160px; flex-direction: row; align-items: center; gap: 80px;">
+  <div style="flex: 1; display:flex; flex-direction: column; gap: 36px;">
+    <div class="eyebrow">No catch</div>
+    <h1 class="big">Free, forever,<br>for the basics.</h1>
+    <p class="lede" style="margin: 0;">No ads. No selling your data. No sketchy "premium" walls between you and your community.</p>
+  </div>
+  <div style="flex: 0 0 640px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="background: var(--emerald-100); border: 1px solid var(--emerald-500); border-radius: 18px; padding: 28px; display:flex; align-items:center; gap: 20px;">
+      <span style="width: 44px; height: 44px; border-radius: 50%; background: var(--emerald-500); color: white; display:flex; align-items:center; justify-content:center; font-weight: 800; font-size: 22px; flex-shrink: 0;">✓</span>
+      <div>
+        <div style="font-family: var(--font-display); font-weight: 700; font-size: 22px; color: var(--warm-900);">Posting, joining rooms, messaging</div>
+        <div style="font-size: 18px; color: var(--warm-700);">Free. Always.</div>
+      </div>
+    </div>
+    <div style="background: var(--emerald-100); border: 1px solid var(--emerald-500); border-radius: 18px; padding: 28px; display:flex; align-items:center; gap: 20px;">
+      <span style="width: 44px; height: 44px; border-radius: 50%; background: var(--emerald-500); color: white; display:flex; align-items:center; justify-content:center; font-weight: 800; font-size: 22px; flex-shrink: 0;">✓</span>
+      <div>
+        <div style="font-family: var(--font-display); font-weight: 700; font-size: 22px; color: var(--warm-900);">Verification</div>
+        <div style="font-size: 18px; color: var(--warm-700);">Free. Always.</div>
+      </div>
+    </div>
+    <div style="background: var(--emerald-100); border: 1px solid var(--emerald-500); border-radius: 18px; padding: 28px; display:flex; align-items:center; gap: 20px;">
+      <span style="width: 44px; height: 44px; border-radius: 50%; background: var(--emerald-500); color: white; display:flex; align-items:center; justify-content:center; font-weight: 800; font-size: 22px; flex-shrink: 0;">✓</span>
+      <div>
+        <div style="font-family: var(--font-display); font-weight: 700; font-size: 22px; color: var(--warm-900);">Posting jobs &amp; events</div>
+        <div style="font-size: 18px; color: var(--warm-700);">Free. Always.</div>
+      </div>
+    </div>
+    <div style="background: var(--surface-2); border: 1px dashed var(--border-strong); border-radius: 18px; padding: 28px;">
+      <div style="font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--fg-2);">Later, maybe:</div>
+      <div style="font-size: 18px; color: var(--fg-3); margin-top: 4px;">Premium tools for businesses, event hosts, matchmakers — never the basics.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 — How to join ==================================================== -->
+<section data-screen-label="13 How to join" class="slide dark" style="padding: 130px 140px; flex-direction: column; justify-content: center; gap: 60px;">
+  <div>
+    <div class="eyebrow">How to join</div>
+    <h1 class="big" style="color: #FAFAF7; margin-top: 18px;">Three groups. Three doors. <span style="color: var(--saffron-300);">Pick any one.</span></h1>
+  </div>
+  <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 28px;">
+    <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 36px; display: flex; flex-direction: column; gap: 18px;">
+      <div style="display:flex; align-items: center; gap: 12px;">
+        <span style="width: 36px; height: 36px; background: #1877F2; border-radius: 8px; display:flex; align-items:center; justify-content:center; color:white; font-weight: 900; font-family: serif; font-size: 22px;">f</span>
+        <span style="font-size: 13px; color: rgba(250,246,239,0.6); font-weight: 600;">Facebook group</span>
+      </div>
+      <h3 style="color: #FAFAF7; font-size: 26px;">Nepali Community in Dallas</h3>
+      <div style="height: 1px; background: rgba(255,255,255,0.1);"></div>
+      <ol style="margin: 0; padding-left: 24px; color: rgba(250,246,239,0.85); font-size: 18px; line-height: 1.7;">
+        <li>Look for the pinned post</li>
+        <li>Comment "join"</li>
+        <li>We DM you the invite</li>
+      </ol>
+    </div>
+    <div style="background: var(--primary-600); border: 1px solid var(--primary-600); border-radius: 20px; padding: 36px; display: flex; flex-direction: column; gap: 18px; transform: translateY(-12px);">
+      <div style="display:flex; align-items: center; gap: 12px; justify-content: space-between;">
+        <div style="display:flex; align-items: center; gap: 12px;">
+          <span style="width: 36px; height: 36px; background: white; border-radius: 8px; display:flex; align-items:center; justify-content:center; color:#1877F2; font-weight: 900; font-family: serif; font-size: 22px;">f</span>
+          <span style="font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 600;">Facebook group</span>
+        </div>
+        <span style="background: white; color: var(--primary-700); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; letter-spacing: 0.08em;">FASTEST</span>
+      </div>
+      <h3 style="color: white; font-size: 26px;">United Nepal Help Network</h3>
+      <div style="height: 1px; background: rgba(255,255,255,0.25);"></div>
+      <ol style="margin: 0; padding-left: 24px; color: rgba(255,255,255,0.95); font-size: 18px; line-height: 1.7;">
+        <li>Look for the pinned post</li>
+        <li>Click the join link</li>
+        <li>Verify in 60 seconds</li>
+      </ol>
+    </div>
+    <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 36px; display: flex; flex-direction: column; gap: 18px;">
+      <div style="display:flex; align-items: center; gap: 12px;">
+        <span style="width: 36px; height: 36px; background: #1877F2; border-radius: 8px; display:flex; align-items:center; justify-content:center; color:white; font-weight: 900; font-family: serif; font-size: 22px;">f</span>
+        <span style="font-size: 13px; color: rgba(250,246,239,0.6); font-weight: 600;">Facebook group</span>
+      </div>
+      <h3 style="color: #FAFAF7; font-size: 26px;">US Nepal Help Network</h3>
+      <div style="height: 1px; background: rgba(255,255,255,0.1);"></div>
+      <ol style="margin: 0; padding-left: 24px; color: rgba(250,246,239,0.85); font-size: 18px; line-height: 1.7;">
+        <li>Look for the pinned post</li>
+        <li>Comment "join"</li>
+        <li>We DM you the invite</li>
+      </ol>
+    </div>
+  </div>
+  <div style="display:flex; align-items: center; justify-content: center; gap: 18px; padding: 24px 36px; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); border-radius: 14px; max-width: 1100px; margin: 0 auto;">
+    <span style="font-size: 28px;">🔗</span>
+    <span style="font-size: 22px; color: rgba(250,246,239,0.95); font-weight: 600;">Or go directly to <span style="color: var(--saffron-300); font-weight: 700;">nepsphere.com/dallas</span></span>
+  </div>
+</section>
+
+<!-- 14 — First week ===================================================== -->
+<section data-screen-label="14 First week" class="slide cream" style="padding: 130px 160px; flex-direction: column; justify-content: center; gap: 60px;">
+  <div>
+    <div class="eyebrow">Your first week</div>
+    <h1 class="big">Three small things.<br><span style="color: var(--primary-600);">That's it.</span></h1>
+  </div>
+  <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 36px;">
+    <div style="display:flex; flex-direction: column; gap: 24px;">
+      <div style="font-family: var(--font-display); font-weight: 800; font-size: 96px; line-height: 1; color: var(--primary-600);">1</div>
+      <h3 style="font-size: 32px;">Verify.</h3>
+      <p style="font-size: 22px; margin: 0;">60 seconds, ID + selfie. Once. Done. Your orange check goes live.</p>
+    </div>
+    <div style="display:flex; flex-direction: column; gap: 24px;">
+      <div style="font-family: var(--font-display); font-weight: 800; font-size: 96px; line-height: 1; color: var(--primary-600);">2</div>
+      <h3 style="font-size: 32px;">Join two rooms.</h3>
+      <p style="font-size: 22px; margin: 0;">Definitely Dallas-Fort Worth. Then one for who you are — F1, Aamaa, foodies, runners.</p>
+    </div>
+    <div style="display:flex; flex-direction: column; gap: 24px;">
+      <div style="font-family: var(--font-display); font-weight: 800; font-size: 96px; line-height: 1; color: var(--primary-600);">3</div>
+      <h3 style="font-size: 32px;">Post a hello.</h3>
+      <p style="font-size: 22px; margin: 0;">Where you're from in Nepal, where you are now, what you're up to. The community will say hi back.</p>
+    </div>
+  </div>
+  <p style="font-size: 24px; color: var(--fg-3); text-align: center; margin: 0; max-width: 900px; margin-left: auto; margin-right: auto;">The rest comes naturally — that's how community works.</p>
+</section>
+
+<!-- 15 — Dhanyabad ====================================================== -->
+<section data-screen-label="15 Dhanyabad" class="slide dark" style="padding: 0;">
+  <div class="flag-stripe top"></div>
+  <div style="position:absolute; inset:0; background-image:url('../assets/topo-pattern.svg'); background-size: 600px; opacity: 0.06;"></div>
+
+  <div style="display:flex; flex-direction: column; align-items: center; justify-content: center; padding: 120px; width: 100%; gap: 48px; text-align: center; position: relative; z-index: 2;">
+    <div class="deva" style="font-size: 80px; color: var(--saffron-300); line-height: 1;">धन्यवाद</div>
+    <h1 class="display" style="color: #FAFAF7;">Dhanyabad.</h1>
+    <p style="font-size: 36px; color: rgba(250,246,239,0.78); max-width: 1100px;">Built with love by Nepalis, for Nepalis.<br>See you in the app.</p>
+
+    <div style="display: flex; gap: 18px; margin-top: 32px;">
+      <span style="background: var(--primary-600); color: white; padding: 18px 36px; border-radius: 12px; font-size: 22px; font-weight: 700;">nepsphere.com/dallas</span>
+      <span style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.2); color: #FAFAF7; padding: 18px 36px; border-radius: 12px; font-size: 22px; font-weight: 600;">@nepsphere</span>
+    </div>
+
+    <div style="margin-top: 60px; display:flex; align-items:center; gap: 14px;">
+      <svg width="44" height="44" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#1E3A8A"/><circle cx="32" cy="32" r="26" fill="#FAFAF7"/><path d="M10 44 L22 24 L29 34 L38 18 L54 44 Z" fill="#1E3A8A"/><circle cx="42" cy="22" r="5" fill="#DC2626"/></svg>
+      <span style="font-family: var(--font-display); font-weight: 800; font-size: 28px; color: #FAFAF7;">Nepsphere</span>
+    </div>
+  </div>
+  <div class="flag-stripe bottom"></div>
+</section>
+
+</deck-stage>
+</body>
+</html>
