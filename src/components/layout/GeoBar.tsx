@@ -118,6 +118,7 @@ export function GeoBar() {
               </div>
               <button
                 onClick={() => go()}
+                onMouseEnter={() => setCountryHover(null)}
                 style={{
                   display: 'block', textAlign: 'left',
                   padding: '9px 14px', border: 'none',
@@ -137,7 +138,6 @@ export function GeoBar() {
                     key={c.name}
                     onClick={() => go(c.name)}
                     onMouseEnter={() => setCountryHover(c.name)}
-                    onMouseLeave={() => setCountryHover(null)}
                     style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                       width: 'calc(100% - 8px)', margin: '0 4px',
@@ -182,7 +182,6 @@ export function GeoBar() {
                       key={s.stateName}
                       onClick={() => go(activeCountry, s.stateName)}
                       onMouseEnter={() => setStateHover(s.stateName)}
-                      onMouseLeave={() => setStateHover(null)}
                       style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                         width: 'calc(100% - 8px)', margin: '0 4px',
