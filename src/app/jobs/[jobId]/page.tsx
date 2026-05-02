@@ -37,14 +37,14 @@ export default async function JobDetailPage({
   if (!job) notFound()
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: 24 }}>
+    <div className="np-subpage">
       <Link href="/jobs" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, color: 'var(--fg-3)', textDecoration: 'none', marginBottom: 20 }}>
         <ArrowLeft size={14} strokeWidth={1.5} /> Back to Jobs
       </Link>
 
-      <div className="np-card" style={{ padding: 28 }}>
+      <div className="np-card np-card-body">
         {/* Header */}
-        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', marginBottom: 20 }}>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', marginBottom: 20, flexWrap: 'wrap' }}>
           <div style={{
             width: 56, height: 56,
             borderRadius: 14,

@@ -58,7 +58,7 @@ export default async function ConnectProfilePage({ params }: { params: Promise<{
   ].filter(Boolean) as { label: string; value: string }[]
 
   return (
-    <div style={{ maxWidth: 680, margin: '0 auto', padding: 24 }}>
+    <div className="np-subpage" style={{ maxWidth: 680 }}>
       <Link href="/connect" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, color: 'var(--fg-3)', textDecoration: 'none', marginBottom: 20 }}>
         <ArrowLeft size={14} strokeWidth={1.5} /> Back to Connect
       </Link>
@@ -75,7 +75,7 @@ export default async function ConnectProfilePage({ params }: { params: Promise<{
         </div>
 
         {/* Header info */}
-        <div style={{ padding: '56px 32px 0', textAlign: 'center' }}>
+        <div style={{ padding: '56px 20px 0', textAlign: 'center' }}>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 26, color: 'var(--fg-1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
             {profile.user.name ?? 'Nepali member'}
             {profile.user.isVerified && <Badge size={18} />}
@@ -111,7 +111,7 @@ export default async function ConnectProfilePage({ params }: { params: Promise<{
 
         {/* Bio */}
         {profile.bio && (
-          <div style={{ padding: '20px 32px' }}>
+          <div style={{ padding: '20px 20px' }}>
             <p style={{ fontSize: 15, color: 'var(--fg-2)', lineHeight: 1.75, margin: 0, borderLeft: `3px solid ${color}`, paddingLeft: 14 }}>
               {profile.bio as string}
             </p>

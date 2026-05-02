@@ -35,14 +35,14 @@ export default async function RoomDetailPage({
   const availStr = new Date(room.availableFrom).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto', padding: 24 }}>
+    <div className="np-subpage-md">
       <Link href="/rooms" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, color: 'var(--fg-3)', textDecoration: 'none', marginBottom: 20 }}>
         <ArrowLeft size={14} strokeWidth={1.5} /> Back to Rooms
       </Link>
 
       {/* Photo gallery placeholder */}
       <div style={{
-        height: 320,
+        height: 'clamp(180px, 45vw, 320px)',
         borderRadius: 20,
         background: 'linear-gradient(135deg, var(--warm-100), var(--warm-200))',
         marginBottom: 24,
@@ -56,7 +56,7 @@ export default async function RoomDetailPage({
         {room.photos.length > 0 ? `${room.photos.length} photos` : 'No photos yet'}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 24 }}>
+      <div className="np-2col-right">
         <div>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 8 }}>
             <h1 style={{ margin: 0, fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 28, color: 'var(--fg-1)' }}>
@@ -87,7 +87,7 @@ export default async function RoomDetailPage({
 
         {/* Contact card */}
         <div>
-          <div className="np-card" style={{ padding: 24, position: 'sticky', top: 120 }}>
+          <div className="np-card np-card-body" style={{ position: 'sticky', top: 120 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
               <Avatar name={room.host.name ?? 'NS'} size={48} src={room.host.image ?? undefined} />
               <div>

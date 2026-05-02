@@ -58,7 +58,7 @@ export function RoomForm() {
         <input className="np-input" value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Cozy private room in Uptown Dallas" required />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="np-form-2col">
         <div>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Monthly rent ($)</label>
           <input className="np-input" type="number" value={form.price} onChange={e => set('price', e.target.value)} placeholder="850" required min={100} />
@@ -69,7 +69,7 @@ export function RoomForm() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="np-form-2col">
         <div>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Room type</label>
           <select className="np-input" value={form.type} onChange={e => set('type', e.target.value)}>
@@ -84,7 +84,7 @@ export function RoomForm() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="np-form-2col">
         <div>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>City</label>
           <select className="np-input" value={form.city} onChange={e => set('city', e.target.value)}>

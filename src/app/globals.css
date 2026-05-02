@@ -319,9 +319,33 @@ a:hover { text-decoration: underline; }
 .np-2col-right  { display: grid; grid-template-columns: 1fr 320px;        gap: 28px; align-items: start; }
 .np-hide-mobile { display: block; }
 
+/* Form 2-col grid — collapses to 1 col on mobile */
+.np-form-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Subpage wrappers */
+.np-subpage    { max-width: 800px; margin: 0 auto; padding: 24px; }
+.np-subpage-sm { max-width: 720px; margin: 0 auto; padding: 24px; }
+.np-subpage-md { max-width: 960px; margin: 0 auto; padding: 24px; }
+
+/* Card body with responsive padding */
+.np-card-body { padding: 28px; }
+
 @media (max-width: 768px) {
   /* Body: extra bottom padding so bottom nav never covers content */
   body { padding-bottom: 72px; }
+
+  /* Form grids collapse to single column */
+  .np-form-2col { grid-template-columns: 1fr; }
+
+  /* Subpage padding */
+  .np-subpage, .np-subpage-sm, .np-subpage-md { padding: 16px 14px; }
+
+  /* Card inner padding reduction */
+  .np-card-body { padding: 18px !important; }
 
   /* Page padding */
   .np-page-wrap { padding: 16px 14px; }

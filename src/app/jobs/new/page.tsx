@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 
 export default function NewJobPage() {
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: 24 }}>
+    <div className="np-subpage-sm">
       <Link href="/jobs" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, color: 'var(--fg-3)', textDecoration: 'none', marginBottom: 20 }}>
         <ArrowLeft size={14} strokeWidth={1.5} /> Back to Jobs
       </Link>
@@ -18,7 +18,7 @@ export default function NewJobPage() {
         </p>
       </div>
 
-      <div className="np-card" style={{ padding: 28 }}>
+      <div className="np-card np-card-body">
         <JobForm />
       </div>
     </div>

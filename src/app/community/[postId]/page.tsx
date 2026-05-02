@@ -46,12 +46,12 @@ export default async function PostDetailPage({
   if (!post) notFound()
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '24px' }}>
+    <div className="np-subpage">
       <Link href="/community" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, color: 'var(--fg-3)', textDecoration: 'none', marginBottom: 20 }}>
         <ArrowLeft size={14} strokeWidth={1.5} /> Back to Community
       </Link>
 
-      <article className="np-card" style={{ padding: 28, marginBottom: 24 }}>
+      <article className="np-card np-card-body" style={{ marginBottom: 24 }}>
         <header style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
           <Avatar name={post.author.name ?? 'NS'} size={44} src={post.author.image ?? undefined} />
           <div>

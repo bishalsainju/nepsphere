@@ -48,7 +48,7 @@ export function JobForm() {
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="np-form-2col">
         <div>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Job title</label>
           <input className="np-input" value={form.title} onChange={e => set('title', e.target.value)} placeholder="Software Engineer" required />
@@ -59,7 +59,7 @@ export function JobForm() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="np-form-2col">
         <div>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Job type</label>
           <select className="np-input" value={form.type} onChange={e => set('type', e.target.value)}>
@@ -74,7 +74,7 @@ export function JobForm() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="np-form-2col">
         <div>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Location (full)</label>
           <input className="np-input" value={form.location} onChange={e => set('location', e.target.value)} placeholder="Dallas, TX (Remote OK)" required />
