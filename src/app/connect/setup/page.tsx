@@ -80,6 +80,12 @@ function ChipBtn({ selected, onClick, children }: { selected: boolean; onClick: 
   )
 }
 
+const PREF_GENDERS = [
+  { id: '',       label: 'Everyone' },
+  { id: 'MALE',   label: 'Men' },
+  { id: 'FEMALE', label: 'Women' },
+]
+
 const EMPTY_FORM = {
   intent: '', gender: '', lookingFor: [] as string[],
   age: '', height: '', bio: '',
@@ -87,6 +93,7 @@ const EMPTY_FORM = {
   hometown: '', religion: '', caste: '',
   occupation: '', education: '', dietary: '', drinking: '', smoking: '',
   language: [] as string[],
+  prefGender: '', prefMinAge: 18, prefMaxAge: 60,
 }
 
 export default function ConnectSetupPage() {
@@ -122,6 +129,9 @@ export default function ConnectSetupPage() {
             drinking:   existing.drinking   ?? '',
             smoking:    existing.smoking    ?? '',
             language:   existing.language   ?? [],
+            prefGender: existing.prefGender ?? '',
+            prefMinAge: existing.prefMinAge ?? 18,
+            prefMaxAge: existing.prefMaxAge ?? 60,
           })
         }
       })
@@ -405,6 +415,50 @@ export default function ConnectSetupPage() {
         </div>
       ),
     },
+    {
+      title: "Who do you want to meet?",
+      subtitle: "We'll use this to filter your matches automatically",
+      valid: true,
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Show me</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {PREF_GENDERS.map(g => (
+                <ChoiceBtn key={g.id} selected={form.prefGender === g.id} onClick={() => set('prefGender', g.id)}>
+                  {g.label}
+                </ChoiceBtn>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>
+              Age range: {form.prefMinAge}–{form.prefMaxAge}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontSize: 13, color: 'var(--fg-3)', width: 28 }}>Min</span>
+                <input
+                  type="range" min={18} max={70} value={form.prefMinAge}
+                  onChange={e => set('prefMinAge', Math.min(+e.target.value, form.prefMaxAge - 1))}
+                  style={{ flex: 1, accentColor: 'var(--primary)' }}
+                />
+                <span style={{ fontSize: 14, fontWeight: 700, width: 28, color: 'var(--fg-1)' }}>{form.prefMinAge}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontSize: 13, color: 'var(--fg-3)', width: 28 }}>Max</span>
+                <input
+                  type="range" min={19} max={80} value={form.prefMaxAge}
+                  onChange={e => set('prefMaxAge', Math.max(+e.target.value, form.prefMinAge + 1))}
+                  style={{ flex: 1, accentColor: 'var(--primary)' }}
+                />
+                <span style={{ fontSize: 14, fontWeight: 700, width: 28, color: 'var(--fg-1)' }}>{form.prefMaxAge}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
   ]
 
   const currentStep = steps[step]
@@ -418,7 +472,13 @@ export default function ConnectSetupPage() {
       const res = await fetch('/api/connect/profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, age: form.age ? parseInt(form.age) : null }),
+        body: JSON.stringify({
+        ...form,
+        age: form.age ? parseInt(form.age) : null,
+        prefGender: form.prefGender || null,
+        prefMinAge: form.prefMinAge,
+        prefMaxAge: form.prefMaxAge,
+      }),
       })
       if (res.status === 401) {
         setNotSignedIn(true)

@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   const {
     intent, gender, lookingFor, age, height, bio, language, caste,
     religion, hometown, occupation, education, drinking, smoking,
-    dietary, city, state, country,
+    dietary, city, state, country, prefGender, prefMinAge, prefMaxAge,
   } = body
 
   if (!intent || !bio) {
@@ -41,6 +41,9 @@ export async function POST(req: NextRequest) {
     city:    city    ?? 'Dallas',
     state:   state   ?? 'Texas',
     country: country ?? 'USA',
+    prefGender:  prefGender  ?? null,
+    prefMinAge:  prefMinAge  ?? null,
+    prefMaxAge:  prefMaxAge  ?? null,
   }
 
   const profile = await prisma.connectProfile.upsert({

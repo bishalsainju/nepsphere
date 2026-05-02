@@ -173,11 +173,26 @@ export function ConnectClient() {
   const [animating, setAnimating] = useState<'like' | 'pass' | null>(null)
   // undefined = loading, null = no profile, string = has profile
   const [myProfileUserId, setMyProfileUserId] = useState<string | null | undefined>(undefined)
+  const [matchCount,   setMatchCount]   = useState(0)
+  const [receivedLikes, setReceivedLikes] = useState(0)
 
   useEffect(() => {
     fetch('/api/connect/profile')
       .then(r => r.ok ? r.json() : null)
-      .then(p => setMyProfileUserId(p?.userId ?? null))
+      .then(p => {
+        setMyProfileUserId(p?.userId ?? null)
+        if (p?.userId) {
+          // Auto-apply saved preferences as initial filter values
+          if (p.prefGender)  setGenderFilter(p.prefGender)
+          if (p.prefMinAge)  setMinAge(p.prefMinAge)
+          if (p.prefMaxAge)  setMaxAge(p.prefMaxAge)
+          // Load match/like stats
+          fetch('/api/connect/like')
+            .then(r => r.json())
+            .then(d => { setMatchCount(d.matches ?? 0); setReceivedLikes(d.receivedLikes ?? 0) })
+            .catch(() => {})
+        }
+      })
       .catch(() => setMyProfileUserId(null))
   }, [])
 
@@ -219,9 +234,21 @@ export function ConnectClient() {
   const doAction = useCallback((action: 'like' | 'pass') => {
     if (!current || animating) return
     setAnimating(action)
+    const profileId = current.id
+    const userId    = current.userId
     setTimeout(() => {
-      if (action === 'like') setLiked(s => new Set([...s, current.id]))
-      else setPassed(s => new Set([...s, current.id]))
+      if (action === 'like') {
+        setLiked(s => new Set([...s, profileId]))
+        fetch('/api/connect/like', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ toUserId: userId }),
+        }).then(r => r.json()).then(d => {
+          if (d.isMatch) setMatchCount(c => c + 1)
+        }).catch(() => {})
+      } else {
+        setPassed(s => new Set([...s, profileId]))
+      }
       setAnimating(null)
     }, 220)
   }, [current, animating])
@@ -280,7 +307,7 @@ export function ConnectClient() {
           {showFilters ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
         </button>
         <Link
-          href="/connect/setup"
+          href={myProfileUserId ? `/connect/${myProfileUserId}` : '/connect/setup'}
           style={{
             marginLeft: 'auto', padding: '8px 18px', borderRadius: 9999,
             background: 'var(--primary)', color: 'white',
@@ -288,7 +315,8 @@ export function ConnectClient() {
             display: 'inline-flex', alignItems: 'center', gap: 6,
           }}
         >
-          <UserCircle2 size={15} strokeWidth={1.5} /> My profile
+          <UserCircle2 size={15} strokeWidth={1.5} />
+          {myProfileUserId ? 'My profile' : 'Create profile'}
         </Link>
       </div>
 
@@ -494,22 +522,53 @@ export function ConnectClient() {
             )}
           </div>
 
-          {/* Session stats */}
-          <div className="np-card" style={{ padding: 18 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>
-              Your session
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <div style={{ textAlign: 'center', padding: '12px 0', background: '#FFF0F0', borderRadius: 10 }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#EF4444' }}>{passed.size}</div>
-                <div style={{ fontSize: 11, color: '#EF4444', fontWeight: 600 }}>Passed</div>
+          {/* Match stats */}
+          {myProfileUserId && (
+            <div className="np-card" style={{ padding: 18 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>
+                Your matches
               </div>
-              <div style={{ textAlign: 'center', padding: '12px 0', background: '#F0FFF4', borderRadius: 10 }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#22C55E' }}>{liked.size}</div>
-                <div style={{ fontSize: 11, color: '#22C55E', fontWeight: 600 }}>Liked</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+                <div style={{ textAlign: 'center', padding: '12px 0', background: '#FFF0F9', borderRadius: 10 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#E31C5F' }}>{matchCount}</div>
+                  <div style={{ fontSize: 11, color: '#E31C5F', fontWeight: 600 }}>Matches</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '12px 0', background: '#FFF7ED', borderRadius: 10 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#EA580C' }}>{receivedLikes}</div>
+                  <div style={{ fontSize: 11, color: '#EA580C', fontWeight: 600 }}>Liked you</div>
+                </div>
+              </div>
+              <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: 10, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div style={{ textAlign: 'center', padding: '10px 0', background: '#FFF0F0', borderRadius: 10 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#EF4444' }}>{passed.size}</div>
+                  <div style={{ fontSize: 11, color: '#EF4444', fontWeight: 600 }}>Passed</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '10px 0', background: '#F0FFF4', borderRadius: 10 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#22C55E' }}>{liked.size}</div>
+                  <div style={{ fontSize: 11, color: '#22C55E', fontWeight: 600 }}>Liked</div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Session stats (no profile) */}
+          {!myProfileUserId && (
+            <div className="np-card" style={{ padding: 18 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>
+                Your session
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div style={{ textAlign: 'center', padding: '12px 0', background: '#FFF0F0', borderRadius: 10 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#EF4444' }}>{passed.size}</div>
+                  <div style={{ fontSize: 11, color: '#EF4444', fontWeight: 600 }}>Passed</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '12px 0', background: '#F0FFF4', borderRadius: 10 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#22C55E' }}>{liked.size}</div>
+                  <div style={{ fontSize: 11, color: '#22C55E', fontWeight: 600 }}>Liked</div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Tips */}
           <div className="np-card" style={{ padding: 18 }}>

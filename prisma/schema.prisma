@@ -218,11 +218,23 @@ model ConnectProfile {
   drinking   String?
   smoking    String?
   dietary    String?
+  prefGender String?
+  prefMinAge Int?
+  prefMaxAge Int?
   isVisible  Boolean       @default(true)
   city       String
   state      String?       @default("Texas")
   country    String?       @default("USA")
   createdAt  DateTime      @default(now())
+}
+
+model ConnectLike {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  createdAt  DateTime @default(now())
+
+  @@unique([fromUserId, toUserId])
 }
 
 model Message {
