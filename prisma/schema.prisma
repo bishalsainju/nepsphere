@@ -1,0 +1,277 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth ───────────────────────────────────────────────────────
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  phone         String?
+  isVerified    Boolean   @default(false)
+  verifiedAt    DateTime?
+  isAdmin       Boolean   @default(false)
+  bio           String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  country         String?           @default("USA")
+  state           String?           @default("Texas")
+  city            String?           @default("Dallas")
+
+  accounts        Account[]
+  sessions        Session[]
+  posts           Post[]
+  replies         Reply[]
+  rooms           Room[]
+  jobs            Job[]
+  connectProfile  ConnectProfile?
+  communityGroups GroupMembership[]
+  savedRooms      SavedRoom[]
+  savedJobs       SavedJob[]
+  messages        Message[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Community (Discussions) ─────────────────────────────────────
+model Post {
+  id        String       @id @default(cuid())
+  title     String
+  body      String       @db.Text
+  category  PostCategory
+  city      String       @default("Dallas")
+  state     String       @default("Texas")
+  country   String       @default("USA")
+  authorId  String
+  author    User         @relation(fields: [authorId], references: [id])
+  replies   Reply[]
+  likes     Int          @default(0)
+  pinned    Boolean      @default(false)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Reply {
+  id        String   @id @default(cuid())
+  body      String   @db.Text
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum PostCategory {
+  VISA
+  JOBS
+  LIFE_ABROAD
+  STUDENT
+  FOOD_CULTURE
+  GENERAL
+}
+
+// ─── Community Groups ─────────────────────────────────────────────
+model CommunityGroup {
+  id           String            @id @default(cuid())
+  name         String
+  slug         String            @unique
+  description  String
+  emoji        String?
+  city         String            @default("Dallas")
+  state        String?           @default("Texas")
+  country      String?           @default("USA")
+  isPrivate    Boolean           @default(false)
+  membersCount Int               @default(0)
+  members      GroupMembership[]
+  posts        GroupPost[]
+  createdAt    DateTime          @default(now())
+}
+
+model GroupMembership {
+  id       String         @id @default(cuid())
+  userId   String
+  groupId  String
+  role     GroupRole      @default(MEMBER)
+  user     User           @relation(fields: [userId], references: [id])
+  group    CommunityGroup @relation(fields: [groupId], references: [id])
+  joinedAt DateTime       @default(now())
+
+  @@unique([userId, groupId])
+}
+
+model GroupPost {
+  id        String         @id @default(cuid())
+  groupId   String
+  group     CommunityGroup @relation(fields: [groupId], references: [id])
+  title     String
+  body      String         @db.Text
+  authorId  String
+  createdAt DateTime       @default(now())
+}
+
+enum GroupRole {
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+// ─── Rooms (Physical housing listings only) ──────────────────────
+model Room {
+  id             String     @id @default(cuid())
+  title          String
+  description    String     @db.Text
+  price          Int
+  type           RoomType
+  genderPref     GenderPref @default(ANY)
+  city           String
+  state          String
+  country        String     @default("USA")
+  area           String?
+  address        String?
+  availableFrom  DateTime
+  photos         String[]
+  hostId         String
+  host           User       @relation(fields: [hostId], references: [id])
+  isVerifiedHost Boolean    @default(false)
+  isFeatured     Boolean    @default(false)
+  isAvailable    Boolean    @default(true)
+  savedBy        SavedRoom[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model SavedRoom {
+  userId String
+  roomId String
+  user   User   @relation(fields: [userId], references: [id])
+  room   Room   @relation(fields: [roomId], references: [id])
+
+  @@id([userId, roomId])
+}
+
+enum RoomType {
+  PRIVATE
+  SHARED
+  STUDIO
+  ENTIRE_APT
+}
+
+enum GenderPref {
+  ANY
+  FEMALE
+  MALE
+  MIXED
+}
+
+// ─── Connect ─────────────────────────────────────────────────────
+model ConnectProfile {
+  id         String        @id @default(cuid())
+  userId     String        @unique
+  user       User          @relation(fields: [userId], references: [id])
+  intent     ConnectIntent
+  bio        String?       @db.Text
+  photos     String[]
+  age        Int?
+  height     String?
+  gender     String?
+  lookingFor String[]      @default([])
+  language   String[]      @default([])
+  caste      String?
+  religion   String?
+  hometown   String?
+  occupation String?
+  education  String?
+  drinking   String?
+  smoking    String?
+  dietary    String?
+  isVisible  Boolean       @default(true)
+  city       String
+  state      String?       @default("Texas")
+  country    String?       @default("USA")
+  createdAt  DateTime      @default(now())
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  fromUserId String
+  toUserId   String
+  body       String   @db.Text
+  read       Boolean  @default(false)
+  from       User     @relation(fields: [fromUserId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+enum ConnectIntent {
+  FRIENDSHIP
+  DATING
+  MARRIAGE
+}
+
+// ─── Jobs ────────────────────────────────────────────────────────
+model Job {
+  id          String    @id @default(cuid())
+  title       String
+  company     String
+  description String    @db.Text
+  type        JobType
+  location    String
+  city        String
+  state       String?
+  country     String?   @default("USA")
+  salary      String?
+  sponsorship Boolean   @default(false)
+  postedById  String
+  postedBy    User      @relation(fields: [postedById], references: [id])
+  savedBy     SavedJob[]
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model SavedJob {
+  userId String
+  jobId  String
+  user   User   @relation(fields: [userId], references: [id])
+  job    Job    @relation(fields: [jobId], references: [id])
+
+  @@id([userId, jobId])
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  GIG
+  INTERNSHIP
+}

@@ -1,0 +1,310 @@
+'use client'
+import { useState } from 'react'
+import { signOut } from 'next-auth/react'
+import Link from 'next/link'
+import { Settings, MapPin, CheckCircle, Shield, MessageSquare, Briefcase, Home, Heart, LogOut, Edit, Eye, EyeOff } from 'lucide-react'
+
+type Tab = 'community' | 'connect' | 'jobs' | 'rooms'
+
+const CATEGORY_LABELS: Record<string, string> = {
+  VISA: 'Visa', JOBS: 'Jobs', LIFE_ABROAD: 'Life abroad',
+  STUDENT: 'Student', FOOD_CULTURE: 'Food & culture', GENERAL: 'General',
+}
+const ROOM_TYPES: Record<string, string> = {
+  PRIVATE: 'Private room', SHARED: 'Shared', STUDIO: 'Studio', ENTIRE_APT: 'Entire apt',
+}
+const JOB_TYPES: Record<string, string> = {
+  FULL_TIME: 'Full-time', PART_TIME: 'Part-time', CONTRACT: 'Contract', GIG: 'Gig', INTERNSHIP: 'Internship',
+}
+const INTENT_LABELS: Record<string, string> = { FRIENDSHIP: 'Friendship', DATING: 'Dating', MARRIAGE: 'Marriage' }
+const INTENT_COLORS: Record<string, string> = { FRIENDSHIP: '#3B82F6', DATING: '#E31C5F', MARRIAGE: '#0E9F6E' }
+const GENDER_LABELS: Record<string, string> = { MALE: 'Man', FEMALE: 'Woman', NON_BINARY: 'Non-binary', OTHER: 'Other' }
+
+function timeAgo(date: Date | string) {
+  const d = new Date(date)
+  const mins = Math.floor((Date.now() - d.getTime()) / 60000)
+  if (mins < 60) return `${mins}m ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  if (days < 30) return `${days}d ago`
+  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+}
+
+function EmptyState({ icon, label, cta, href }: { icon: string; label: string; cta: string; href: string }) {
+  return (
+    <div style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--fg-3)' }}>
+      <div style={{ fontSize: 40, marginBottom: 12 }}>{icon}</div>
+      <div style={{ fontSize: 15, marginBottom: 16 }}>{label}</div>
+      <Link href={href} style={{ padding: '9px 20px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+        {cta}
+      </Link>
+    </div>
+  )
+}
+
+export function ProfileClient({ user, posts, jobs, rooms, connectProfile }: {
+  user: any
+  posts: any[]
+  jobs: any[]
+  rooms: any[]
+  connectProfile: any
+}) {
+  const [tab, setTab] = useState<Tab>('community')
+
+  const TABS = [
+    { id: 'community' as Tab, label: 'Community', count: posts.length,   icon: MessageSquare, color: '#7C3AED' },
+    { id: 'connect'   as Tab, label: 'Connect',   count: connectProfile ? 1 : 0, icon: Heart,    color: '#E31C5F' },
+    { id: 'jobs'      as Tab, label: 'Jobs',       count: jobs.length,    icon: Briefcase,    color: '#0EA5E9' },
+    { id: 'rooms'     as Tab, label: 'Rooms',      count: rooms.length,   icon: Home,         color: '#EA580C' },
+  ]
+
+  const initials = (user.name ?? user.email ?? 'U').split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
+
+  return (
+    <div style={{ maxWidth: 860, margin: '0 auto', padding: 24 }}>
+
+      {/* Header card */}
+      <div className="np-card" style={{ padding: 0, overflow: 'hidden', marginBottom: 20 }}>
+        {/* Banner */}
+        <div style={{ height: 100, background: 'linear-gradient(135deg, var(--primary) 0%, #7C3AED 100%)', position: 'relative' }} />
+
+        <div style={{ padding: '0 28px 24px' }}>
+          {/* Avatar */}
+          <div style={{ marginTop: -36, marginBottom: 12, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+            <div style={{ width: 72, height: 72, borderRadius: '50%', border: '3px solid var(--surface)', overflow: 'hidden', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              {user.image
+                ? <img src={user.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                : <span style={{ fontSize: 24, fontWeight: 800, color: 'white' }}>{initials}</span>}
+            </div>
+            <div style={{ display: 'flex', gap: 8, paddingBottom: 4 }}>
+              <Link
+                href="/profile/settings"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 14px', borderRadius: 9999, border: '1px solid var(--border)', background: 'var(--surface)', fontSize: 13, fontWeight: 600, color: 'var(--fg-2)', textDecoration: 'none' }}
+              >
+                <Settings size={14} strokeWidth={1.8} /> Settings
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 14px', borderRadius: 9999, border: '1px solid #FCA5A5', background: '#FFF5F5', fontSize: 13, fontWeight: 600, color: '#DC2626', cursor: 'pointer', fontFamily: 'inherit' }}
+              >
+                <LogOut size={14} strokeWidth={1.8} /> Sign out
+              </button>
+            </div>
+          </div>
+
+          {/* Name + badges */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: 'var(--fg-1)', margin: 0 }}>
+              {user.name ?? user.email}
+            </h1>
+            {user.isVerified && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, background: '#D1FAE5', color: '#065F46', padding: '2px 8px', borderRadius: 9999 }}>
+                <CheckCircle size={11} /> Verified
+              </span>
+            )}
+            {user.isAdmin && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, background: '#EDE9FE', color: '#5B21B6', padding: '2px 8px', borderRadius: 9999 }}>
+                <Shield size={11} /> Admin
+              </span>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', fontSize: 13, color: 'var(--fg-3)', alignItems: 'center' }}>
+            {(user.city || user.state) && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <MapPin size={13} strokeWidth={1.5} />
+                {[user.city, user.state].filter(Boolean).join(', ')}
+              </span>
+            )}
+            <span>Member since {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab nav */}
+      <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid var(--border-subtle)', marginBottom: 20 }}>
+        {TABS.map(t => {
+          const Icon = t.icon
+          return (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              style={{
+                padding: '10px 18px', border: 'none', background: 'transparent',
+                fontFamily: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                color: tab === t.id ? t.color : 'var(--fg-3)',
+                borderBottom: `2px solid ${tab === t.id ? t.color : 'transparent'}`,
+                marginBottom: -1, display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
+              }}
+            >
+              <Icon size={14} strokeWidth={1.8} />
+              {t.label}
+              <span style={{ fontSize: 11, fontWeight: 700, background: tab === t.id ? t.color + '18' : 'var(--surface-2)', color: tab === t.id ? t.color : 'var(--fg-4)', padding: '1px 6px', borderRadius: 9999 }}>
+                {t.count}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* ── Community tab ── */}
+      {tab === 'community' && (
+        posts.length === 0
+          ? <EmptyState icon="💬" label="You haven't posted anything yet." cta="Start a discussion" href="/community/new" />
+          : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {posts.map(p => (
+                <Link key={p.id} href={`/community/${p.id}`} style={{ textDecoration: 'none' }}>
+                  <div className="np-card interactive" style={{ padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', marginBottom: 4 }}>{p.title}</div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 12, color: 'var(--fg-4)', alignItems: 'center' }}>
+                        <span style={{ fontWeight: 700, color: '#7C3AED', background: '#EDE9FE', padding: '1px 7px', borderRadius: 9999, fontSize: 11 }}>
+                          {CATEGORY_LABELS[p.category] ?? p.category}
+                        </span>
+                        <span>{p.city}</span>
+                        <span>·</span>
+                        <span>{p._count.replies} {p._count.replies === 1 ? 'reply' : 'replies'}</span>
+                        <span>·</span>
+                        <span>{p.likes} likes</span>
+                        <span>·</span>
+                        <span>{timeAgo(p.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )
+      )}
+
+      {/* ── Connect tab ── */}
+      {tab === 'connect' && (
+        !connectProfile
+          ? <EmptyState icon="💕" label="You don't have a Connect profile yet." cta="Create Connect profile" href="/connect/setup" />
+          : (
+            <div className="np-card" style={{ padding: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, gap: 12, flexWrap: 'wrap' }}>
+                <div>
+                  <span style={{ display: 'inline-block', background: INTENT_COLORS[connectProfile.intent] + '18', color: INTENT_COLORS[connectProfile.intent], fontWeight: 700, fontSize: 13, padding: '4px 14px', borderRadius: 9999, marginBottom: 8 }}>
+                    {INTENT_LABELS[connectProfile.intent]}
+                  </span>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                    {connectProfile.isVisible
+                      ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#059669' }}><Eye size={13} /> Visible to others</span>
+                      : <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--fg-4)' }}><EyeOff size={13} /> Hidden</span>}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Link href={`/connect/${connectProfile.userId}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '8px 16px', borderRadius: 9999, border: `1.5px solid ${INTENT_COLORS[connectProfile.intent]}`, color: INTENT_COLORS[connectProfile.intent], fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+                    <Eye size={14} /> View profile
+                  </Link>
+                  <Link href="/connect/setup" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '8px 16px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+                    <Edit size={14} /> Edit profile
+                  </Link>
+                </div>
+              </div>
+
+              {/* Details grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 14 }}>
+                {[
+                  connectProfile.age        && { label: 'Age',        value: `${connectProfile.age} yrs` },
+                  connectProfile.gender     && { label: 'Gender',     value: GENDER_LABELS[connectProfile.gender] ?? connectProfile.gender },
+                  connectProfile.height     && { label: 'Height',     value: connectProfile.height },
+                  connectProfile.city       && { label: 'Location',   value: `${connectProfile.city}${connectProfile.state ? ', ' + connectProfile.state : ''}` },
+                  connectProfile.hometown   && { label: 'Hometown',   value: `🇳🇵 ${connectProfile.hometown}` },
+                  connectProfile.religion   && { label: 'Religion',   value: connectProfile.religion },
+                  connectProfile.caste      && { label: 'Community',  value: connectProfile.caste },
+                  connectProfile.occupation && { label: 'Occupation', value: connectProfile.occupation },
+                  connectProfile.education  && { label: 'Education',  value: connectProfile.education },
+                ].filter(Boolean).map((d: any) => (
+                  <div key={d.label}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>{d.label}</div>
+                    <div style={{ fontSize: 14, color: 'var(--fg-1)', fontWeight: 500 }}>{d.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {connectProfile.bio && (
+                <p style={{ marginTop: 16, fontSize: 14, color: 'var(--fg-2)', lineHeight: 1.7, borderTop: '1px solid var(--border-subtle)', paddingTop: 16, margin: '16px 0 0' }}>
+                  {connectProfile.bio}
+                </p>
+              )}
+
+              {connectProfile.lookingFor?.length > 0 && (
+                <div style={{ marginTop: 14, display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <span style={{ fontSize: 12, color: 'var(--fg-3)' }}>Looking for:</span>
+                  {connectProfile.lookingFor.map((lf: string) => (
+                    <span key={lf} style={{ fontSize: 12, fontWeight: 600, background: INTENT_COLORS[connectProfile.intent] + '15', color: INTENT_COLORS[connectProfile.intent], border: `1px solid ${INTENT_COLORS[connectProfile.intent]}25`, padding: '3px 10px', borderRadius: 9999 }}>
+                      {lf}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+      )}
+
+      {/* ── Jobs tab ── */}
+      {tab === 'jobs' && (
+        jobs.length === 0
+          ? <EmptyState icon="💼" label="You haven't posted any jobs yet." cta="Post a job" href="/jobs/new" />
+          : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {jobs.map(j => (
+                <Link key={j.id} href={`/jobs/${j.id}`} style={{ textDecoration: 'none' }}>
+                  <div className="np-card interactive" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', marginBottom: 4 }}>{j.title}</div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 12, color: 'var(--fg-4)', alignItems: 'center' }}>
+                        <span style={{ fontWeight: 600, color: 'var(--fg-2)' }}>{j.company}</span>
+                        <span>·</span>
+                        <span style={{ fontWeight: 700, color: '#0EA5E9', background: '#E0F2FE', padding: '1px 7px', borderRadius: 9999, fontSize: 11 }}>{JOB_TYPES[j.type] ?? j.type}</span>
+                        <span>·</span>
+                        <span>{j.city}</span>
+                        {j.sponsorship && <span style={{ fontSize: 11, fontWeight: 700, background: '#D1FAE5', color: '#065F46', padding: '1px 7px', borderRadius: 9999 }}>Visa</span>}
+                        <span>·</span>
+                        <span>{timeAgo(j.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )
+      )}
+
+      {/* ── Rooms tab ── */}
+      {tab === 'rooms' && (
+        rooms.length === 0
+          ? <EmptyState icon="🏠" label="You haven't listed any rooms yet." cta="List a room" href="/rooms/new" />
+          : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {rooms.map(r => (
+                <Link key={r.id} href={`/rooms/${r.id}`} style={{ textDecoration: 'none' }}>
+                  <div className="np-card interactive" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', marginBottom: 4 }}>{r.title}</div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 12, color: 'var(--fg-4)', alignItems: 'center' }}>
+                        <span style={{ fontWeight: 700, color: 'var(--fg-1)' }}>${r.price}/mo</span>
+                        <span>·</span>
+                        <span style={{ fontWeight: 700, color: '#EA580C', background: '#FFF7ED', padding: '1px 7px', borderRadius: 9999, fontSize: 11 }}>{ROOM_TYPES[r.type] ?? r.type}</span>
+                        <span>·</span>
+                        <span>{r.city}</span>
+                        <span>·</span>
+                        <span style={{ fontWeight: 600, color: r.isAvailable ? '#059669' : 'var(--fg-4)' }}>{r.isAvailable ? 'Available' : 'Unavailable'}</span>
+                        <span>·</span>
+                        <span>{timeAgo(r.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )
+      )}
+
+    </div>
+  )
+}
