@@ -9,8 +9,6 @@ const NAV_ITEMS = [
   { href: '/rooms',     label: 'Rooms' },
   { href: '/connect',   label: 'Connect' },
   { href: '/jobs',      label: 'Jobs' },
-  { href: '/deck',      label: 'Decks' },
-  { href: '/video',     label: 'Videos' },
 ]
 
 export async function TopNav() {
