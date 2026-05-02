@@ -37,6 +37,8 @@ model User {
   savedRooms      SavedRoom[]
   savedJobs       SavedJob[]
   messages        Message[]
+  decks           Deck[]
+  videos          Video[]
 }
 
 model Account {
@@ -274,4 +276,28 @@ enum JobType {
   CONTRACT
   GIG
   INTERNSHIP
+}
+
+// ─── Decks ───────────────────────────────────────────────────────
+model Deck {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  url         String
+  category    String?
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+// ─── Videos ──────────────────────────────────────────────────────
+model Video {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  url         String
+  category    String?
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  createdAt   DateTime @default(now())
 }
