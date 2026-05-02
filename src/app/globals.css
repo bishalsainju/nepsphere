@@ -311,3 +311,46 @@ a:hover { text-decoration: underline; }
 
 @keyframes np-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes np-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── Responsive layout helpers ─────────────────────────────────── */
+.np-page-wrap   { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.np-3col        { display: grid; grid-template-columns: 240px 1fr 280px; gap: 24px; align-items: start; }
+.np-2col-left   { display: grid; grid-template-columns: 240px 1fr;       gap: 24px; }
+.np-2col-right  { display: grid; grid-template-columns: 1fr 320px;        gap: 28px; align-items: start; }
+.np-hide-mobile { display: block; }
+
+@media (max-width: 768px) {
+  /* Body: extra bottom padding so bottom nav never covers content */
+  body { padding-bottom: 72px; }
+
+  /* Page padding */
+  .np-page-wrap { padding: 16px 14px; }
+
+  /* All multi-column grids collapse to single column */
+  .np-3col, .np-2col-left, .np-2col-right { grid-template-columns: 1fr; gap: 16px; }
+
+  /* Hide side rails entirely on mobile */
+  .np-hide-mobile { display: none !important; }
+
+  /* Cards */
+  .np-card { border-radius: 14px; }
+
+  /* GeoBar dropdown: constrain to viewport width */
+  .np-geobar-panel {
+    min-width: min(560px, calc(100vw - 28px)) !important;
+    max-width: calc(100vw - 28px) !important;
+    overflow-x: auto;
+  }
+
+  /* Tabs: horizontal scroll instead of wrapping/clipping */
+  .np-tabs-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .np-tabs-scroll::-webkit-scrollbar { display: none; }
+
+  /* Connect: intent bar wraps on mobile */
+  .np-connect-topbar { flex-wrap: wrap; gap: 6px; }
+  .np-connect-topbar .np-connect-spacer { display: none; }
+}

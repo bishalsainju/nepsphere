@@ -48,16 +48,8 @@ export default async function RoomsPage({
   }
 
   return (
-    <div style={{
-      maxWidth: 1200,
-      margin: '0 auto',
-      padding: '24px',
-      display: 'grid',
-      gridTemplateColumns: '260px 1fr 280px',
-      gap: 24,
-      alignItems: 'start',
-    }}>
-      <div style={{ position: 'sticky', top: 120 }}>
+    <div className="np-page-wrap np-3col">
+      <div className="np-hide-mobile" style={{ position: 'sticky', top: 120 }}>
         <RoomsFilters city={city ?? ''} country={country} state={state} />
       </div>
 
@@ -81,7 +73,7 @@ export default async function RoomsPage({
         </div>
       </div>
 
-      <div style={{ position: 'sticky', top: 120 }}>
+      <div className="np-hide-mobile" style={{ position: 'sticky', top: 120 }}>
         <RoomsRightRail city={city ?? 'Dallas'} />
       </div>
     </div>

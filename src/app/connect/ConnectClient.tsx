@@ -267,11 +267,11 @@ export function ConnectClient() {
   const locationLabel = city ?? state ?? country ?? 'Everywhere'
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: 24 }}>
+    <div className="np-page-wrap" style={{ maxWidth: 1100 }}>
       <VerificationBanner />
 
       {/* Top bar */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className="np-connect-topbar" style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
         {Object.entries(INTENT_LABELS).map(([id, label]) => (
           <button
             key={id}
@@ -378,7 +378,7 @@ export function ConnectClient() {
       )}
 
       {/* Main layout: card stack + stats sidebar */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 28, alignItems: 'start' }}>
+      <div className="np-2col-right">
 
         {/* Card stack */}
         <div>

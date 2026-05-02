@@ -62,7 +62,7 @@ export function ProfileClient({ user, posts, jobs, rooms, connectProfile }: {
   const initials = (user.name ?? user.email ?? 'U').split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
 
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: 24 }}>
+    <div className="np-page-wrap" style={{ maxWidth: 860 }}>
 
       {/* Header card */}
       <div className="np-card" style={{ padding: 0, overflow: 'hidden', marginBottom: 20 }}>
@@ -123,7 +123,8 @@ export function ProfileClient({ user, posts, jobs, rooms, connectProfile }: {
       </div>
 
       {/* Tab nav */}
-      <div style={{ display: 'flex', gap: 2, borderBottom: '1px solid var(--border-subtle)', marginBottom: 20 }}>
+      <div className="np-tabs-scroll" style={{ borderBottom: '1px solid var(--border-subtle)', marginBottom: 20 }}>
+      <div style={{ display: 'flex', gap: 2, minWidth: 'max-content' }}>
         {TABS.map(t => {
           const Icon = t.icon
           return (
@@ -146,6 +147,7 @@ export function ProfileClient({ user, posts, jobs, rooms, connectProfile }: {
             </button>
           )
         })}
+      </div>
       </div>
 
       {/* ── Community tab ── */}

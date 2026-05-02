@@ -99,7 +99,7 @@ export function GeoBar() {
         </button>
 
         {open && (
-          <div style={{
+          <div className="np-geobar-panel" style={{
             position: 'absolute', top: 'calc(100% + 8px)', left: 0,
             background: 'var(--surface)',
             border: '1px solid var(--border)',

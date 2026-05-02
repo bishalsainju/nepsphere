@@ -38,16 +38,10 @@ export default async function CommunityPage({
   }
 
   return (
-    <div style={{
-      maxWidth: 1200,
-      margin: '0 auto',
-      padding: '24px',
-      display: 'grid',
-      gridTemplateColumns: '240px 1fr 280px',
-      gap: 24,
-      alignItems: 'start',
-    }}>
-      <CategoryRail activeCategory={category ?? 'all'} city={city ?? ''} country={country} state={state} />
+    <div className="np-page-wrap np-3col">
+      <div className="np-hide-mobile">
+        <CategoryRail activeCategory={category ?? 'all'} city={city ?? ''} country={country} state={state} />
+      </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -69,7 +63,9 @@ export default async function CommunityPage({
         )}
       </div>
 
-      <CommunityRightRail city={city ?? 'Dallas'} />
+      <div className="np-hide-mobile">
+        <CommunityRightRail city={city ?? 'Dallas'} />
+      </div>
     </div>
   )
 }

@@ -32,15 +32,8 @@ export default async function JobsPage({
   }
 
   return (
-    <div style={{
-      maxWidth: 1200,
-      margin: '0 auto',
-      padding: '24px',
-      display: 'grid',
-      gridTemplateColumns: '240px 1fr',
-      gap: 24,
-    }}>
-      <div style={{ position: 'sticky', top: 120 }}>
+    <div className="np-page-wrap np-2col-left">
+      <div className="np-hide-mobile" style={{ position: 'sticky', top: 120 }}>
         <JobsRail city={city ?? ''} country={country} state={state} />
       </div>
 

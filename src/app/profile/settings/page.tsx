@@ -1,23 +1,19 @@
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { SettingsClient } from './SettingsClient'
 
-export default function SettingsPage() {
-  return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: 24 }}>
-      <Link href="/profile" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, color: 'var(--fg-3)', textDecoration: 'none', marginBottom: 20 }}>
-        <ArrowLeft size={14} strokeWidth={1.5} /> Back to profile
-      </Link>
+export default async function SettingsPage() {
+  const session = await getServerSession(authOptions)
+  if (!session?.user) redirect('/signin?callbackUrl=/profile/settings')
 
-      <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 800, color: 'var(--fg-1)', marginBottom: 24 }}>
-        Account settings
-      </h1>
+  const userId = (session.user as any).id as string
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, name: true, email: true, image: true, bio: true, city: true, state: true, country: true, isVerified: true, isAdmin: true, createdAt: true },
+  })
+  if (!user) redirect('/signin')
 
-      <div className="np-card np-empty">
-        <h3>Sign in to manage your settings.</h3>
-        <Link href="/signin" className="np-btn np-btn-primary" style={{ marginTop: 16, display: 'inline-flex' }}>
-          Sign in
-        </Link>
-      </div>
-    </div>
-  )
+  return <SettingsClient user={user} />
 }
