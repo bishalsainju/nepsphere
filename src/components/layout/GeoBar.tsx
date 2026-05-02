@@ -13,8 +13,9 @@ export function GeoBar() {
   const router       = useRouter()
   const pathname     = usePathname()
   const searchParams = useSearchParams()
-  const [open, setOpen]       = useState(false)
-  const [hover, setHover]     = useState<string | null>(null)
+  const [open, setOpen]             = useState(false)
+  const [countryHover, setCountryHover] = useState<string | null>(null)
+  const [stateHover,   setStateHover]   = useState<string | null>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
   const country = searchParams.get('country')
@@ -23,8 +24,14 @@ export function GeoBar() {
 
   const label = getLocationLabel(country, state, city)
 
-  const go = useCallback((c?: string, s?: string, ci?: string) => {
+  const closePanel = useCallback(() => {
     setOpen(false)
+    setCountryHover(null)
+    setStateHover(null)
+  }, [])
+
+  const go = useCallback((c?: string, s?: string, ci?: string) => {
+    closePanel()
     const params = new URLSearchParams()
     if (pathname.includes('community') && searchParams.get('category')) {
       params.set('category', searchParams.get('category')!)
@@ -33,27 +40,29 @@ export function GeoBar() {
     if (s)  params.set('state', s)
     if (ci) params.set('city', ci)
     router.push(`${pathname}?${params.toString()}`)
-  }, [router, pathname, searchParams])
+  }, [router, pathname, searchParams, closePanel])
 
   // Close on outside click
   useEffect(() => {
     if (!open) return
     const handler = (e: MouseEvent) => {
-      if (!panelRef.current?.contains(e.target as Node)) setOpen(false)
+      if (!panelRef.current?.contains(e.target as Node)) closePanel()
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
-  }, [open])
+  }, [open, closePanel])
 
-  const activeCountry = hover ?? country ?? null
-  const states  = activeCountry ? getStatesForCountry(activeCountry) : []
-  const cities  = activeCountry && state
-    ? getCitiesForState(activeCountry, state)
-    : activeCountry
-      ? getCitiesForState(activeCountry, states[0]?.stateName ?? '')
-      : []
+  // Reset state hover when country hover changes
+  useEffect(() => { setStateHover(null) }, [countryHover])
 
-  const stateHover  = state ?? states[0]?.stateName ?? null
+  const activeCountry = countryHover ?? country ?? null
+  const states        = activeCountry ? getStatesForCountry(activeCountry) : []
+
+  // Cities: only show when explicitly hovering a state, or a state is already selected (and same country)
+  const activeCityState = stateHover ?? (country === activeCountry ? state : null)
+  const cities          = activeCountry && activeCityState
+    ? getCitiesForState(activeCountry, activeCityState)
+    : []
 
   return (
     <div style={{
@@ -97,7 +106,7 @@ export function GeoBar() {
             borderRadius: 16,
             boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
             display: 'flex',
-            minWidth: 560,
+            minWidth: activeCountry ? (activeCityState ? 560 : 380) : 200,
             overflow: 'hidden',
             animation: 'np-rise 180ms ease-out',
           }}>
@@ -112,98 +121,108 @@ export function GeoBar() {
                 style={{
                   display: 'block', textAlign: 'left',
                   padding: '9px 14px', border: 'none',
-                  background: !country && !hover ? 'var(--primary-50)' : 'transparent',
-                  fontSize: 14, fontWeight: !country && !hover ? 700 : 400,
-                  color: !country && !hover ? 'var(--primary)' : 'var(--fg-1)',
+                  background: !country && !countryHover ? 'var(--primary-50)' : 'transparent',
+                  fontSize: 14, fontWeight: !country && !countryHover ? 700 : 400,
+                  color: !country && !countryHover ? 'var(--primary)' : 'var(--fg-1)',
                   cursor: 'pointer', fontFamily: 'inherit', borderRadius: 8,
                   margin: '0 4px', width: 'calc(100% - 8px)',
                 }}
               >
                 🌍 Everywhere
               </button>
-              {COUNTRIES.map(c => (
-                <button
-                  key={c.name}
-                  onClick={() => go(c.name)}
-                  onMouseEnter={() => setHover(c.name)}
-                  onMouseLeave={() => setHover(null)}
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    width: 'calc(100% - 8px)', margin: '0 4px',
-                    padding: '9px 14px', border: 'none', borderRadius: 8,
-                    background: (hover === c.name || (!hover && country === c.name)) ? 'var(--primary-50)' : 'transparent',
-                    fontSize: 14,
-                    fontWeight: (hover === c.name || (!hover && country === c.name)) ? 700 : 400,
-                    color: (hover === c.name || (!hover && country === c.name)) ? 'var(--primary)' : 'var(--fg-1)',
-                    cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
-                  }}
-                >
-                  <span>{c.flag} {c.name}</span>
-                  <ChevronRight size={12} style={{ opacity: 0.4 }} />
-                </button>
-              ))}
+              {COUNTRIES.map(c => {
+                const isActive = countryHover === c.name || (!countryHover && country === c.name)
+                return (
+                  <button
+                    key={c.name}
+                    onClick={() => go(c.name)}
+                    onMouseEnter={() => setCountryHover(c.name)}
+                    onMouseLeave={() => setCountryHover(null)}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      width: 'calc(100% - 8px)', margin: '0 4px',
+                      padding: '9px 14px', border: 'none', borderRadius: 8,
+                      background: isActive ? 'var(--primary-50)' : 'transparent',
+                      fontSize: 14, fontWeight: isActive ? 700 : 400,
+                      color: isActive ? 'var(--primary)' : 'var(--fg-1)',
+                      cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
+                    }}
+                  >
+                    <span>{c.flag} {c.name}</span>
+                    <ChevronRight size={12} style={{ opacity: 0.4 }} />
+                  </button>
+                )
+              })}
             </div>
 
             {/* Column 2: States */}
             {activeCountry && (
-              <div style={{ width: 180, borderRight: '1px solid var(--border-subtle)', padding: '8px 0' }}>
+              <div style={{ width: 190, borderRight: activeCityState ? '1px solid var(--border-subtle)' : 'none', padding: '8px 0' }}>
                 <div style={{ padding: '6px 14px', fontSize: 11, fontWeight: 700, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                   State / Province
                 </div>
                 <button
                   onClick={() => go(activeCountry)}
+                  onMouseEnter={() => setStateHover(null)}
                   style={{
                     display: 'block', width: 'calc(100% - 8px)', margin: '0 4px',
                     textAlign: 'left', padding: '9px 14px', border: 'none', borderRadius: 8,
-                    background: !state ? 'var(--primary-50)' : 'transparent',
-                    fontSize: 13, fontWeight: !state ? 700 : 400,
-                    color: !state ? 'var(--primary)' : 'var(--fg-3)',
+                    background: !stateHover && (!state || countryHover) ? 'var(--primary-50)' : 'transparent',
+                    fontSize: 13, fontWeight: !stateHover && (!state || countryHover) ? 700 : 400,
+                    color: !stateHover && (!state || countryHover) ? 'var(--primary)' : 'var(--fg-3)',
                     cursor: 'pointer', fontFamily: 'inherit',
                   }}
                 >
                   All of {activeCountry}
                 </button>
-                {states.map(s => (
-                  <button
-                    key={s.stateName}
-                    onClick={() => go(activeCountry, s.stateName)}
-                    style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      width: 'calc(100% - 8px)', margin: '0 4px',
-                      padding: '9px 14px', border: 'none', borderRadius: 8,
-                      background: state === s.stateName ? 'var(--primary-50)' : 'transparent',
-                      fontSize: 13, fontWeight: state === s.stateName ? 700 : 400,
-                      color: state === s.stateName ? 'var(--primary)' : 'var(--fg-1)',
-                      cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
-                    }}
-                  >
-                    <span>{s.stateName}</span>
-                    <ChevronRight size={12} style={{ opacity: 0.4 }} />
-                  </button>
-                ))}
+                {states.map(s => {
+                  const isActive = stateHover === s.stateName || (!stateHover && !countryHover && state === s.stateName)
+                  return (
+                    <button
+                      key={s.stateName}
+                      onClick={() => go(activeCountry, s.stateName)}
+                      onMouseEnter={() => setStateHover(s.stateName)}
+                      onMouseLeave={() => setStateHover(null)}
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        width: 'calc(100% - 8px)', margin: '0 4px',
+                        padding: '9px 14px', border: 'none', borderRadius: 8,
+                        background: isActive ? 'var(--primary-50)' : 'transparent',
+                        fontSize: 13, fontWeight: isActive ? 700 : 400,
+                        color: isActive ? 'var(--primary)' : 'var(--fg-1)',
+                        cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
+                      }}
+                    >
+                      <span>{s.stateName}</span>
+                      {getCitiesForState(activeCountry, s.stateName).length > 0 && (
+                        <ChevronRight size={12} style={{ opacity: 0.4 }} />
+                      )}
+                    </button>
+                  )
+                })}
               </div>
             )}
 
-            {/* Column 3: Cities */}
-            {activeCountry && stateHover && (
-              <div style={{ flex: 1, padding: '8px 0' }}>
+            {/* Column 3: Cities — only when a state is hovered or selected */}
+            {activeCountry && activeCityState && cities.length > 0 && (
+              <div style={{ flex: 1, padding: '8px 0', minWidth: 160 }}>
                 <div style={{ padding: '6px 14px', fontSize: 11, fontWeight: 700, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                   City
                 </div>
                 <button
-                  onClick={() => go(activeCountry, stateHover)}
+                  onClick={() => go(activeCountry, activeCityState)}
                   style={{
                     display: 'block', width: 'calc(100% - 8px)', margin: '0 4px',
                     textAlign: 'left', padding: '9px 14px', border: 'none', borderRadius: 8,
-                    background: 'transparent',
-                    fontSize: 13, fontWeight: 400,
-                    color: 'var(--fg-3)',
+                    background: state === activeCityState && !city ? 'var(--primary-50)' : 'transparent',
+                    fontSize: 13, fontWeight: state === activeCityState && !city ? 700 : 400,
+                    color: state === activeCityState && !city ? 'var(--primary)' : 'var(--fg-3)',
                     cursor: 'pointer', fontFamily: 'inherit',
                   }}
                 >
-                  All of {stateHover}
+                  All of {activeCityState}
                 </button>
-                {getCitiesForState(activeCountry, stateHover).map(c => (
+                {cities.map(c => (
                   <button
                     key={c.city}
                     onClick={() => go(activeCountry, c.stateName, c.city)}
