@@ -55,28 +55,14 @@ export async function TopNav() {
       </div>
 
       <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <button style={{
-          width: 36, height: 36,
-          borderRadius: '50%',
-          background: 'var(--surface-2)',
-          border: 'none',
-          color: 'var(--fg-2)',
-          cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Search size={18} strokeWidth={1.5} />
-        </button>
-        <button style={{
-          width: 36, height: 36,
-          borderRadius: '50%',
-          background: 'var(--surface-2)',
-          border: 'none',
-          color: 'var(--fg-2)',
-          cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Bell size={18} strokeWidth={1.5} />
-        </button>
+        <div className="np-topnav-icons" style={{ alignItems: 'center', gap: 8 }}>
+          <button style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--surface-2)', border: 'none', color: 'var(--fg-2)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Search size={18} strokeWidth={1.5} />
+          </button>
+          <button style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--surface-2)', border: 'none', color: 'var(--fg-2)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Bell size={18} strokeWidth={1.5} />
+          </button>
+        </div>
 
         {isAdmin && (
           <Link href="/admin" style={{
@@ -110,7 +96,7 @@ export async function TopNav() {
                 {(session.user?.name ?? session.user?.email ?? 'U')[0].toUpperCase()}
               </div>
             )}
-            {session.user?.name?.split(' ')[0] ?? 'Profile'}
+            <span className="np-topnav-name">{session.user?.name?.split(' ')[0] ?? 'Profile'}</span>
           </Link>
         ) : (
           <Link href="/signin" style={{

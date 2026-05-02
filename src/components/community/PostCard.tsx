@@ -69,7 +69,7 @@ export function PostCard({
         <p style={{ margin: '6px 0 0', fontSize: 14, color: 'var(--fg-2)', lineHeight: 1.55 }}>{preview}</p>
       </Link>
 
-      <footer style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--fg-2)', fontWeight: 500, alignItems: 'center' }}>
+      <footer className="np-post-footer">
         <button style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', color: 'var(--fg-2)', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
           <MessageCircle size={15} strokeWidth={1.5} /> {post._count.replies} replies
         </button>

@@ -312,6 +312,52 @@ a:hover { text-decoration: underline; }
 @keyframes np-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes np-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
+/* ─── Component responsive helpers ─────────────────────────────── */
+
+/* RoomCard: horizontal photo + content grid */
+.np-room-card { display: grid; grid-template-columns: 220px 1fr; overflow: hidden; }
+.np-room-photo { min-height: 140px; }
+
+/* Intent picker buttons */
+.np-intent-btn { padding: 32px 40px; min-width: 200px; }
+.np-intent-wrap { margin-top: 80px; }
+
+/* TopNav */
+.np-topnav-name  { display: inline; }
+.np-topnav-icons { display: flex; }
+
+/* Post card footer */
+.np-post-footer { display: flex; gap: 16px; font-size: 13px; color: var(--fg-2); font-weight: 500; align-items: center; }
+
+/* Verification banner */
+.np-verify-banner { display: flex; gap: 12px; padding: 12px 20px; align-items: center; }
+
+@media (max-width: 640px) {
+  /* RoomCard: photo on top, content below */
+  .np-room-card { grid-template-columns: 1fr; }
+  .np-room-photo { min-height: 160px; }
+
+  /* Intent picker: full-width compact cards */
+  .np-intent-wrap  { margin-top: 32px; }
+  .np-intent-btn   { padding: 18px 24px; min-width: unset; width: 100%; max-width: 400px; flex-direction: row !important; gap: 14px !important; justify-content: flex-start !important; }
+
+  /* TopNav: hide username text, hide search/bell */
+  .np-topnav-name  { display: none; }
+  .np-topnav-icons { display: none; }
+
+  /* Post card footer: tighter */
+  .np-post-footer { gap: 10px; font-size: 12px; }
+
+  /* Verification banner: stack button below on tiny screens */
+  .np-verify-banner { flex-wrap: wrap; row-gap: 8px; }
+  .np-verify-banner .np-verify-btn { flex: 1; min-width: 120px; justify-content: center; margin-top: 4px; }
+
+  /* Profile header: smaller padding */
+  .np-profile-header-body { padding: 0 16px 20px !important; }
+  .np-profile-actions { gap: 6px !important; }
+  .np-profile-action-text { display: none; }
+}
+
 /* ─── Responsive layout helpers ─────────────────────────────────── */
 .np-page-wrap   { max-width: 1200px; margin: 0 auto; padding: 24px; }
 .np-3col        { display: grid; grid-template-columns: 240px 1fr 280px; gap: 24px; align-items: start; }

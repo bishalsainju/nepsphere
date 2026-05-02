@@ -66,27 +66,28 @@ export function PostComposer({ city }: { city: string }) {
         onChange={e => setBody(e.target.value)}
         style={{ resize: 'vertical', fontFamily: 'inherit' }}
       />
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-        <span className="np-meta">Category</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
         <select
           className="np-input"
           value={category}
           onChange={e => setCategory(e.target.value)}
-          style={{ width: 'auto', flex: 'none' }}
+          style={{ width: 'auto', flex: 'none', fontSize: 13 }}
         >
           {CATEGORIES.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>)}
         </select>
-        <span className="np-meta" style={{ marginLeft: 'auto' }}>
-          Posting in <strong style={{ color: 'var(--fg-1)' }}>{city}</strong>
+        <span className="np-meta" style={{ fontSize: 12 }}>
+          in <strong style={{ color: 'var(--fg-1)' }}>{city}</strong>
         </span>
-        <button className="np-btn np-btn-secondary sm" onClick={() => setOpen(false)}>Cancel</button>
-        <button
-          className="np-btn np-btn-primary sm"
-          disabled={!title.trim() || loading}
-          onClick={handlePost}
-        >
-          {loading ? 'Posting…' : 'Post'}
-        </button>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+          <button className="np-btn np-btn-secondary sm" onClick={() => setOpen(false)}>Cancel</button>
+          <button
+            className="np-btn np-btn-primary sm"
+            disabled={!title.trim() || loading}
+            onClick={handlePost}
+          >
+            {loading ? 'Posting…' : 'Post'}
+          </button>
+        </div>
       </div>
     </div>
   )

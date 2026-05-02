@@ -13,26 +13,25 @@ export function IntentPicker({
   onPick: (intent: string) => void
 }) {
   return (
-    <div style={{ maxWidth: 960, margin: '80px auto', padding: 24, textAlign: 'center' }}>
-      <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px,5vw,40px)', fontWeight: 800, marginBottom: 10 }}>
+    <div className="np-subpage np-intent-wrap" style={{ maxWidth: 960, textAlign: 'center' }}>
+      <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(24px,5vw,40px)', fontWeight: 800, marginBottom: 10 }}>
         What are you looking for?
       </h1>
-      <p style={{ color: 'var(--fg-3)', marginBottom: 48, fontSize: 18 }}>
+      <p style={{ color: 'var(--fg-3)', marginBottom: 40, fontSize: 16 }}>
         Three intents. Never confused.
       </p>
 
-      <div style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
         {INTENTS.map(i => (
           <button
             key={i.id}
             onClick={() => onPick(i.id)}
+            className="np-intent-btn"
             style={{
-              padding: '32px 40px',
-              borderRadius: 24,
+              borderRadius: 20,
               border: '2px solid var(--border)',
               background: 'var(--surface)',
               cursor: 'pointer',
-              minWidth: 200,
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12,
               boxShadow: 'var(--shadow-sm)',
               transition: 'all 180ms ease-out',

@@ -54,12 +54,9 @@ export function RoomCard({
 
   return (
     <Link href={`/rooms/${room.id}`} style={{ textDecoration: 'none' }}>
-      <article
-        className="np-card interactive"
-        style={{ overflow: 'hidden', display: 'grid', gridTemplateColumns: '220px 1fr' }}
-      >
+      <article className="np-card interactive np-room-card">
         {/* Photo / gradient thumbnail */}
-        <div style={{ background: gradientForId(room.id), position: 'relative', minHeight: 140 }}>
+        <div className="np-room-photo" style={{ background: gradientForId(room.id), position: 'relative' }}>
           <div style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(255,255,255,0.95)', fontSize: 11, fontWeight: 700, padding: '4px 8px', borderRadius: 9999 }}>
             {room.photos.length > 0 ? `${room.photos.length} photos` : 'No photos'}
           </div>

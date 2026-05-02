@@ -43,7 +43,7 @@ export function BottomNav() {
               gap: 3,
               textDecoration: 'none',
               color: active ? 'var(--primary)' : 'var(--fg-3)',
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: active ? 700 : 400,
               fontFamily: 'var(--font-body)',
             }}

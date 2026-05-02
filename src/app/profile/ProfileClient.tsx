@@ -98,7 +98,7 @@ export function ProfileClient({ user, posts, jobs, rooms, connectProfile, connec
         {/* Banner */}
         <div style={{ height: 100, background: 'linear-gradient(135deg, var(--primary) 0%, #7C3AED 100%)', position: 'relative' }} />
 
-        <div style={{ padding: '0 28px 24px' }}>
+        <div className="np-profile-header-body" style={{ padding: '0 24px 20px' }}>
           {/* Avatar */}
           <div style={{ marginTop: -36, marginBottom: 12, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
             <div style={{ width: 72, height: 72, borderRadius: '50%', border: '3px solid var(--surface)', overflow: 'hidden', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -106,18 +106,20 @@ export function ProfileClient({ user, posts, jobs, rooms, connectProfile, connec
                 ? <img src={user.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 : <span style={{ fontSize: 24, fontWeight: 800, color: 'white' }}>{initials}</span>}
             </div>
-            <div style={{ display: 'flex', gap: 8, paddingBottom: 4 }}>
+            <div className="np-profile-actions" style={{ display: 'flex', gap: 8, paddingBottom: 4 }}>
               <Link
                 href="/profile/settings"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 14px', borderRadius: 9999, border: '1px solid var(--border)', background: 'var(--surface)', fontSize: 13, fontWeight: 600, color: 'var(--fg-2)', textDecoration: 'none' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '8px 14px', borderRadius: 9999, border: '1px solid var(--border)', background: 'var(--surface)', fontSize: 13, fontWeight: 600, color: 'var(--fg-2)', textDecoration: 'none' }}
               >
-                <Settings size={14} strokeWidth={1.8} /> Settings
+                <Settings size={15} strokeWidth={1.8} />
+                <span className="np-profile-action-text">Settings</span>
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 14px', borderRadius: 9999, border: '1px solid #FCA5A5', background: '#FFF5F5', fontSize: 13, fontWeight: 600, color: '#DC2626', cursor: 'pointer', fontFamily: 'inherit' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '8px 14px', borderRadius: 9999, border: '1px solid #FCA5A5', background: '#FFF5F5', fontSize: 13, fontWeight: 600, color: '#DC2626', cursor: 'pointer', fontFamily: 'inherit' }}
               >
-                <LogOut size={14} strokeWidth={1.8} /> Sign out
+                <LogOut size={15} strokeWidth={1.8} />
+                <span className="np-profile-action-text">Sign out</span>
               </button>
             </div>
           </div>
