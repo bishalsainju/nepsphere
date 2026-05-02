@@ -171,13 +171,14 @@ export function ConnectClient() {
   const [liked, setLiked] = useState<Set<string>>(new Set())
   const [passed, setPassed] = useState<Set<string>>(new Set())
   const [animating, setAnimating] = useState<'like' | 'pass' | null>(null)
-  const [myProfileUserId, setMyProfileUserId] = useState<string | null>(null)
+  // undefined = loading, null = no profile, string = has profile
+  const [myProfileUserId, setMyProfileUserId] = useState<string | null | undefined>(undefined)
 
   useEffect(() => {
     fetch('/api/connect/profile')
       .then(r => r.ok ? r.json() : null)
-      .then(p => { if (p?.userId) setMyProfileUserId(p.userId) })
-      .catch(() => {})
+      .then(p => setMyProfileUserId(p?.userId ?? null))
+      .catch(() => setMyProfileUserId(null))
   }, [])
 
   // Filters
@@ -458,6 +459,41 @@ export function ConnectClient() {
 
         {/* Sidebar */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+
+          {/* Your profile — top of sidebar */}
+          <div className="np-card" style={{ padding: 18 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>
+              Your profile
+            </div>
+            {myProfileUserId === undefined ? (
+              <div style={{ fontSize: 13, color: 'var(--fg-4)', textAlign: 'center', padding: '8px 0' }}>Loading…</div>
+            ) : myProfileUserId ? (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, padding: '8px 10px', background: '#F0FFF4', borderRadius: 10 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22C55E', flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, color: '#15803D', fontWeight: 600 }}>Your profile is live</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <Link href={`/connect/${myProfileUserId}`} style={{ display: 'block', textAlign: 'center', padding: '9px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+                    View my profile
+                  </Link>
+                  <Link href="/connect/setup" style={{ display: 'block', textAlign: 'center', padding: '9px', borderRadius: 9999, background: 'transparent', color: 'var(--primary)', fontWeight: 600, fontSize: 13, textDecoration: 'none', border: '1.5px solid var(--primary)' }}>
+                    Edit profile
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize: 13, color: 'var(--fg-3)', margin: '0 0 12px', lineHeight: 1.5 }}>
+                  Complete your profile so others can find you.
+                </p>
+                <Link href="/connect/setup" style={{ display: 'block', textAlign: 'center', padding: '9px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+                  Create profile
+                </Link>
+              </>
+            )}
+          </div>
+
           {/* Session stats */}
           <div className="np-card" style={{ padding: 18 }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 14 }}>
@@ -472,26 +508,6 @@ export function ConnectClient() {
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#22C55E' }}>{liked.size}</div>
                 <div style={{ fontSize: 11, color: '#22C55E', fontWeight: 600 }}>Liked</div>
               </div>
-            </div>
-          </div>
-
-          {/* Profile prompt */}
-          <div className="np-card" style={{ padding: 18, background: 'var(--primary-50, #EFF6FF)', border: '1px solid var(--primary)30' }}>
-            <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--primary)', marginBottom: 6 }}>
-              Your profile
-            </div>
-            <p style={{ fontSize: 13, color: 'var(--fg-2)', margin: '0 0 12px', lineHeight: 1.5 }}>
-              {myProfileUserId ? 'Your profile is live.' : 'Complete your profile so others can find you.'}
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {myProfileUserId && (
-                <Link href={`/connect/${myProfileUserId}`} style={{ display: 'block', textAlign: 'center', padding: '9px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
-                  View my profile
-                </Link>
-              )}
-              <Link href="/connect/setup" style={{ display: 'block', textAlign: 'center', padding: '9px', borderRadius: 9999, background: myProfileUserId ? 'transparent' : 'var(--primary)', color: myProfileUserId ? 'var(--primary)' : 'white', fontWeight: 600, fontSize: 13, textDecoration: 'none', border: `1.5px solid var(--primary)` }}>
-                {myProfileUserId ? 'Edit profile' : 'Create profile'}
-              </Link>
             </div>
           </div>
 
