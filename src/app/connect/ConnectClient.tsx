@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { IntentPicker } from '@/components/connect/IntentPicker'
@@ -45,32 +45,64 @@ function Tag({ children, color }: { children: React.ReactNode; color?: string })
 }
 
 function ProfileCard({
-  profile, animating,
+  profile, animating, swipeOffset = 0,
 }: {
   profile: any
   animating: 'like' | 'pass' | null
+  swipeOffset?: number
 }) {
   const color    = INTENT_COLORS[profile.intent]  ?? '#6B7280'
   const gradient = INTENT_GRADIENTS[profile.intent] ?? 'linear-gradient(160deg,#F3F4F6,#FFFFFF)'
   const genderLabel = profile.gender ? GENDER_LABELS[profile.gender] ?? profile.gender : null
 
+  const isDragging = !animating && swipeOffset !== 0
+  const showLike   = swipeOffset > 30
+  const showNope   = swipeOffset < -30
+
   const transform = animating === 'like'
-    ? 'translateX(80px) rotate(8deg) scale(0.97)'
+    ? 'translateX(120px) rotate(12deg) scale(0.97)'
     : animating === 'pass'
-    ? 'translateX(-80px) rotate(-8deg) scale(0.97)'
+    ? 'translateX(-120px) rotate(-12deg) scale(0.97)'
+    : isDragging
+    ? `translateX(${swipeOffset}px) rotate(${swipeOffset * 0.04}deg)`
     : 'none'
+
+  const likeOpacity = Math.min(Math.max((swipeOffset - 30) / 60, 0), 1)
+  const nopeOpacity = Math.min(Math.max((-swipeOffset - 30) / 60, 0), 1)
 
   return (
     <div style={{
       transform,
       opacity: animating ? 0.3 : 1,
-      transition: 'transform 0.22s ease, opacity 0.22s ease',
+      transition: isDragging ? 'none' : 'transform 0.22s ease, opacity 0.22s ease',
       borderRadius: 24,
       overflow: 'hidden',
       background: 'var(--surface)',
       boxShadow: '0 12px 48px rgba(0,0,0,0.13)',
       width: '100%',
+      position: 'relative',
+      userSelect: 'none',
     }}>
+      {/* LIKE stamp */}
+      {showLike && (
+        <div style={{
+          position: 'absolute', top: 28, left: 20, zIndex: 10,
+          border: '3px solid #22C55E', borderRadius: 8,
+          padding: '4px 14px', transform: 'rotate(-14deg)',
+          fontSize: 22, fontWeight: 900, color: '#22C55E',
+          opacity: likeOpacity, pointerEvents: 'none',
+        }}>LIKE</div>
+      )}
+      {/* NOPE stamp */}
+      {showNope && (
+        <div style={{
+          position: 'absolute', top: 28, right: 20, zIndex: 10,
+          border: '3px solid #EF4444', borderRadius: 8,
+          padding: '4px 14px', transform: 'rotate(14deg)',
+          fontSize: 22, fontWeight: 900, color: '#EF4444',
+          opacity: nopeOpacity, pointerEvents: 'none',
+        }}>NOPE</div>
+      )}
       {/* Banner */}
       <div style={{ height: 200, background: gradient, position: 'relative', flexShrink: 0 }}>
         <span style={{
@@ -171,6 +203,8 @@ export function ConnectClient() {
   const [liked, setLiked] = useState<Set<string>>(new Set())
   const [passed, setPassed] = useState<Set<string>>(new Set())
   const [animating, setAnimating] = useState<'like' | 'pass' | null>(null)
+  const [swipeOffset, setSwipeOffset] = useState(0)
+  const touchStartX = useRef<number | null>(null)
   // undefined = loading, null = no profile, string = has profile
   const [myProfileUserId, setMyProfileUserId] = useState<string | null | undefined>(undefined)
   const [matchCount,   setMatchCount]   = useState(0)
@@ -261,6 +295,30 @@ export function ConnectClient() {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [doAction])
+
+  const SWIPE_THRESHOLD = 80
+
+  function handleTouchStart(e: React.TouchEvent) {
+    if (animating || !current) return
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    if (touchStartX.current === null || animating) return
+    const dx = e.touches[0].clientX - touchStartX.current
+    setSwipeOffset(dx)
+    if (Math.abs(dx) > 8) e.preventDefault()
+  }
+
+  function handleTouchEnd() {
+    if (touchStartX.current === null) return
+    const offset = swipeOffset
+    setSwipeOffset(0)
+    touchStartX.current = null
+    if (Math.abs(offset) >= SWIPE_THRESHOLD) {
+      doAction(offset > 0 ? 'like' : 'pass')
+    }
+  }
 
   if (!intent) return <IntentPicker onPick={setIntent} />
 
@@ -437,8 +495,13 @@ export function ConnectClient() {
                   </div>
                 )}
                 {/* Current card */}
-                <div style={{ position: 'relative', zIndex: 3 }}>
-                  <ProfileCard profile={current} animating={animating} />
+                <div
+                  style={{ position: 'relative', zIndex: 3, touchAction: 'pan-y' }}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
+                  <ProfileCard profile={current} animating={animating} swipeOffset={swipeOffset} />
                 </div>
               </div>
 
@@ -479,7 +542,7 @@ export function ConnectClient() {
                 </button>
               </div>
               <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--fg-4)', marginTop: 10 }}>
-                ← pass · like →  (or use arrow keys)
+                Swipe left to pass · swipe right to like
               </div>
             </div>
           )}
