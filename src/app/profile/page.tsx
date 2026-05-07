@@ -15,7 +15,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
 
   const userId = (session.user as any).id as string
 
-  const [user, posts, jobs, rooms, connectProfile, savedRooms, savedJobs, appliedJobs] = await Promise.all([
+  const [user, posts, jobs, rooms, connectProfile, savedRooms, savedJobs, appliedJobs, jobProfile] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { id: true, name: true, email: true, image: true, city: true, state: true, country: true, isVerified: true, isAdmin: true, createdAt: true, bio: true },
@@ -53,6 +53,13 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
       where: { userId },
       orderBy: { createdAt: 'desc' },
       include: { job: { select: { id: true, title: true, company: true, type: true, city: true, sponsorship: true, createdAt: true } } },
+    }),
+    prisma.jobProfile.findUnique({
+      where: { userId },
+      include: {
+        experiences: { orderBy: { sortOrder: 'asc' }, take: 2 },
+        education:   { orderBy: { sortOrder: 'asc' }, take: 2 },
+      },
     }),
   ])
 
@@ -94,6 +101,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
       appliedJobs={appliedJobs.map(a => a.job)}
       connectProfile={connectProfile}
       connectStats={connectStats}
+      jobProfile={jobProfile}
       initialTab={initialTab}
     />
   )

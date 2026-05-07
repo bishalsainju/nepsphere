@@ -178,7 +178,7 @@ function EmptyState({ icon, label, cta, href }: { icon: string; label: string; c
   )
 }
 
-export function ProfileClient({ user, posts, jobs, rooms, savedRooms, savedJobs, appliedJobs, connectProfile, connectStats, initialTab }: {
+export function ProfileClient({ user, posts, jobs, rooms, savedRooms, savedJobs, appliedJobs, connectProfile, connectStats, jobProfile, initialTab }: {
   user: any
   posts: any[]
   jobs: any[]
@@ -188,6 +188,7 @@ export function ProfileClient({ user, posts, jobs, rooms, savedRooms, savedJobs,
   appliedJobs: any[]
   connectProfile: any
   connectStats: { likerProfiles: any[]; matches: any[]; likesReceived: number; unreadMessages: number }
+  jobProfile: any
   initialTab?: Tab
 }) {
   const [tab, setTab] = useState<Tab>(initialTab ?? 'community')
@@ -401,6 +402,75 @@ export function ProfileClient({ user, posts, jobs, rooms, savedRooms, savedJobs,
       {/* ── Jobs tab ── */}
       {tab === 'jobs' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+          {/* Job profile card */}
+          <div className="np-card" style={{ padding: 18 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Job profile
+              </div>
+              <Link
+                href="/jobs/profile/setup"
+                style={{ fontSize: 13, fontWeight: 600, color: 'var(--primary)', textDecoration: 'none' }}
+              >
+                {jobProfile?.headline ? 'Edit' : 'Create'}
+              </Link>
+            </div>
+            {jobProfile?.headline ? (
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', marginBottom: 4 }}>
+                  {jobProfile.headline}
+                </div>
+                {jobProfile.about && (
+                  <div style={{ fontSize: 13, color: 'var(--fg-2)', lineHeight: 1.6, marginBottom: 10 }}>
+                    {jobProfile.about.length > 160 ? jobProfile.about.slice(0, 160) + '…' : jobProfile.about}
+                  </div>
+                )}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 12, color: 'var(--fg-3)' }}>
+                  {jobProfile.workAuth && <span>🪪 {jobProfile.workAuth}</span>}
+                  {jobProfile.city && <span>📍 {jobProfile.city}{jobProfile.state ? `, ${jobProfile.state}` : ''}</span>}
+                  {jobProfile.resumeUrl && (
+                    <a href={jobProfile.resumeUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--primary)', fontWeight: 600 }}>
+                      📄 Resume
+                    </a>
+                  )}
+                  {(jobProfile.skills ?? []).slice(0, 4).map((s: string) => (
+                    <span key={s} style={{ padding: '2px 8px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600 }}>{s}</span>
+                  ))}
+                </div>
+                {(jobProfile.experiences ?? []).length > 0 && (
+                  <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    {jobProfile.experiences.map((e: any) => (
+                      <div key={e.id} style={{ fontSize: 13, color: 'var(--fg-2)' }}>
+                        <strong>{e.role}</strong> · {e.company}
+                        {(e.startDate || e.current) && (
+                          <span style={{ color: 'var(--fg-4)', marginLeft: 6 }}>
+                            {e.startDate} – {e.current ? 'Present' : (e.endDate || '')}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ fontSize: 32 }}>💼</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg-1)', marginBottom: 4 }}>
+                    Create your job profile
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--fg-3)' }}>
+                    Employers see your headline, experience, and resume when you apply.
+                  </div>
+                </div>
+                <Link href="/jobs/profile/setup" className="np-btn np-btn-primary sm" style={{ whiteSpace: 'nowrap' }}>
+                  Get started
+                </Link>
+              </div>
+            )}
+          </div>
+
           {/* Posted jobs */}
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
