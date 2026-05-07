@@ -1,25 +1,30 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { Bookmark, BookmarkCheck, ArrowRight, X, Send, CheckCircle } from 'lucide-react'
+import { Bookmark, BookmarkCheck, ArrowRight, X, Send, CheckCircle, UserCircle2 } from 'lucide-react'
+import Link from 'next/link'
 
 export function JobActions({ jobId, jobTitle, company }: { jobId: string; jobTitle: string; company: string }) {
   const { data: session, status } = useSession()
-  const [saved,       setSaved]       = useState(false)
-  const [applied,     setApplied]     = useState(false)
-  const [savingLoad,  setSavingLoad]  = useState(false)
-  const [showApply,   setShowApply]   = useState(false)
-  const [note,        setNote]        = useState('')
-  const [submitting,  setSubmitting]  = useState(false)
+  const [saved,          setSaved]          = useState(false)
+  const [applied,        setApplied]        = useState(false)
+  const [hasJobProfile,  setHasJobProfile]  = useState<boolean | null>(null)
+  const [savingLoad,     setSavingLoad]     = useState(false)
+  const [showApply,      setShowApply]      = useState(false)
+  const [showNeedProfile, setShowNeedProfile] = useState(false)
+  const [note,           setNote]           = useState('')
+  const [submitting,     setSubmitting]     = useState(false)
 
   useEffect(() => {
     if (status !== 'authenticated') return
     Promise.all([
       fetch(`/api/jobs/${jobId}/save`).then(r => r.json()),
       fetch(`/api/jobs/${jobId}/apply`).then(r => r.json()),
-    ]).then(([saveData, applyData]) => {
+      fetch('/api/jobs/profile').then(r => r.json()),
+    ]).then(([saveData, applyData, profileData]) => {
       setSaved(saveData.saved ?? false)
       setApplied(applyData.applied ?? false)
+      setHasJobProfile(!!(profileData?.headline?.trim() && profileData?.about?.trim()))
     }).catch(() => {})
   }, [jobId, status])
 
@@ -44,6 +49,15 @@ export function JobActions({ jobId, jobTitle, company }: { jobId: string; jobTit
     }
   }
 
+  function handleApplyClick() {
+    if (!requireAuth()) return
+    if (hasJobProfile === false) {
+      setShowNeedProfile(true)
+      return
+    }
+    setShowApply(true)
+  }
+
   async function submitApplication() {
     setSubmitting(true)
     try {
@@ -54,8 +68,8 @@ export function JobActions({ jobId, jobTitle, company }: { jobId: string; jobTit
       })
       const data = await res.json().catch(() => ({}))
       if (data.profileRequired) {
-        const returnTo = encodeURIComponent(window.location.pathname)
-        window.location.href = `/jobs/profile/setup?returnTo=${returnTo}`
+        setShowApply(false)
+        setShowNeedProfile(true)
         return
       }
       setApplied(true)
@@ -65,8 +79,46 @@ export function JobActions({ jobId, jobTitle, company }: { jobId: string; jobTit
     }
   }
 
+  const returnTo = encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname : `/jobs/${jobId}`)
+
   return (
     <>
+      {showNeedProfile && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 16px' }}
+          onClick={e => { if (e.target === e.currentTarget) setShowNeedProfile(false) }}
+        >
+          <div style={{ background: 'var(--surface)', borderRadius: 20, padding: 32, maxWidth: 420, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.2)', textAlign: 'center', position: 'relative' }}>
+            <button onClick={() => setShowNeedProfile(false)} style={{ position: 'absolute', top: 14, right: 14, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fg-3)' }}>
+              <X size={18} />
+            </button>
+            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #059669, #34D399)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <UserCircle2 size={28} style={{ color: 'white' }} />
+            </div>
+            <h3 style={{ margin: '0 0 8px', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: 'var(--fg-1)' }}>
+              Create your job profile first
+            </h3>
+            <p style={{ margin: '0 0 24px', fontSize: 14, color: 'var(--fg-3)', lineHeight: 1.6 }}>
+              Employers see your headline, experience, and resume when you apply to <strong>{jobTitle}</strong>. Takes about 2 minutes to set up.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <Link
+                href={`/jobs/profile/setup?returnTo=${returnTo}`}
+                style={{ display: 'block', padding: '12px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}
+              >
+                Create job profile
+              </Link>
+              <button
+                onClick={() => setShowNeedProfile(false)}
+                style={{ padding: '12px', borderRadius: 9999, border: '1px solid var(--border)', background: 'transparent', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', color: 'var(--fg-2)' }}
+              >
+                Maybe later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showApply && (
         <div
           style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 16px' }}
@@ -117,7 +169,7 @@ export function JobActions({ jobId, jobTitle, company }: { jobId: string; jobTit
           </button>
         ) : (
           <button
-            onClick={() => { if (requireAuth()) setShowApply(true) }}
+            onClick={handleApplyClick}
             className="np-btn np-btn-primary lg"
             style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
           >
