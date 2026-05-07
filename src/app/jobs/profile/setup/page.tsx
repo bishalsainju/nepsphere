@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Plus, Trash2, Upload, FileText, X, ExternalLink } from 'lucide-react'
@@ -84,7 +84,7 @@ function Chip({ selected, onClick, children }: { selected: boolean; onClick: () 
   )
 }
 
-export default function JobProfileSetupPage() {
+function JobProfileSetupInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const returnTo = searchParams.get('returnTo')
@@ -532,5 +532,13 @@ export default function JobProfileSetupPage() {
         </button>
       </div>
     </div>
+  )
+}
+
+export default function JobProfileSetupPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: 60, textAlign: 'center', color: 'var(--fg-3)' }}>Loading…</div>}>
+      <JobProfileSetupInner />
+    </Suspense>
   )
 }
