@@ -1,7 +1,10 @@
+'use client'
+import { useState } from 'react'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
-import { MessageCircle, Heart, Bookmark, Flag, MoreHorizontal } from 'lucide-react'
+import { MessageCircle, Heart, Flag } from 'lucide-react'
 
 const CATEGORY_LABELS: Record<string, string> = {
   VISA:         'Visa',
@@ -37,7 +40,28 @@ export function PostCard({
     _count: { replies: number }
   }
 }) {
+  const { data: session } = useSession()
+  const [likes,   setLikes]   = useState(post.likes)
+  const [liked,   setLiked]   = useState(false)
+  const [liking,  setLiking]  = useState(false)
+
   const preview = post.body.length > 240 ? post.body.slice(0, 240) + '…' : post.body
+
+  async function handleLike() {
+    if (!session) { window.location.href = '/signin?callbackUrl=' + window.location.pathname; return }
+    if (liked || liking) return
+    setLiking(true)
+    try {
+      const res = await fetch(`/api/posts/${post.id}/like`, { method: 'POST' })
+      if (res.ok) {
+        const d = await res.json()
+        setLikes(d.likes)
+        setLiked(true)
+      }
+    } finally {
+      setLiking(false)
+    }
+  }
 
   return (
     <article className="np-card" style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -56,9 +80,6 @@ export function PostCard({
             <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{CATEGORY_LABELS[post.category] ?? post.category}</span>
           </div>
         </div>
-        <button style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--fg-4)', cursor: 'pointer', padding: 4 }}>
-          <MoreHorizontal size={18} strokeWidth={1.5} />
-        </button>
       </header>
 
       <Link href={`/community/${post.id}`} style={{ textDecoration: 'none' }}>
@@ -70,16 +91,28 @@ export function PostCard({
       </Link>
 
       <footer className="np-post-footer">
-        <button style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', color: 'var(--fg-2)', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
-          <MessageCircle size={15} strokeWidth={1.5} /> {post._count.replies} replies
+        <Link
+          href={`/community/${post.id}`}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: 'var(--fg-2)', fontSize: 13, fontWeight: 500, textDecoration: 'none' }}
+        >
+          <MessageCircle size={15} strokeWidth={1.5} /> {post._count.replies} {post._count.replies === 1 ? 'reply' : 'replies'}
+        </Link>
+        <button
+          onClick={handleLike}
+          disabled={liked || liking}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            background: 'none', border: 'none', cursor: liked ? 'default' : 'pointer',
+            fontSize: 13, fontWeight: liked ? 700 : 500,
+            color: liked ? '#E31C5F' : 'var(--fg-2)',
+          }}
+        >
+          <Heart size={15} strokeWidth={1.5} fill={liked ? '#E31C5F' : 'none'} />
+          {likes}
         </button>
-        <button style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', color: 'var(--fg-2)', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
-          <Heart size={15} strokeWidth={1.5} /> {post.likes}
-        </button>
-        <button style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', color: 'var(--fg-2)', cursor: 'pointer', fontSize: 13, fontWeight: 500 }}>
-          <Bookmark size={15} strokeWidth={1.5} /> Save
-        </button>
-        <button style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', color: 'var(--fg-3)', cursor: 'pointer', fontSize: 13 }}>
+        <button
+          style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', color: 'var(--fg-3)', cursor: 'pointer', fontSize: 13 }}
+        >
           <Flag size={15} strokeWidth={1.5} /> Report
         </button>
       </footer>

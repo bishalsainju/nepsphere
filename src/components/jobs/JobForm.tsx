@@ -1,6 +1,8 @@
 'use client'
 import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const CITIES = ['Dallas', 'Houston', 'Austin', 'New York', 'San Jose', 'Toronto', 'Vancouver', 'Sydney']
 const JOB_TYPES = [
@@ -12,6 +14,7 @@ const JOB_TYPES = [
 ]
 
 export function JobForm() {
+  const { status } = useSession()
   const router = useRouter()
   const [form, setForm] = useState({
     title: '', company: '', description: '', type: 'FULL_TIME',
@@ -44,6 +47,19 @@ export function JobForm() {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (status === 'unauthenticated') {
+    return (
+      <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+        <div style={{ fontSize: 40, marginBottom: 16 }}>🔐</div>
+        <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, marginBottom: 8, color: 'var(--fg-1)' }}>Sign in to post a job</h3>
+        <p style={{ fontSize: 14, color: 'var(--fg-3)', marginBottom: 20 }}>You need to be signed in to post a job listing.</p>
+        <Link href="/signin?callbackUrl=/jobs/new" style={{ display: 'inline-block', padding: '10px 28px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 15, textDecoration: 'none' }}>
+          Sign in with Google
+        </Link>
+      </div>
+    )
   }
 
   return (

@@ -2,7 +2,8 @@ import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { Logo } from '@/components/ui/Logo'
-import { Search, Bell, LayoutDashboard } from 'lucide-react'
+import { LayoutDashboard } from 'lucide-react'
+import { TopNavSearch } from './TopNavSearch'
 
 const NAV_ITEMS = [
   { href: '/community', label: 'Community' },
@@ -56,12 +57,7 @@ export async function TopNav() {
 
       <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
         <div className="np-topnav-icons" style={{ alignItems: 'center', gap: 8 }}>
-          <button style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--surface-2)', border: 'none', color: 'var(--fg-2)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Search size={18} strokeWidth={1.5} />
-          </button>
-          <button style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--surface-2)', border: 'none', color: 'var(--fg-2)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Bell size={18} strokeWidth={1.5} />
-          </button>
+          <TopNavSearch />
         </div>
 
         {isAdmin && (

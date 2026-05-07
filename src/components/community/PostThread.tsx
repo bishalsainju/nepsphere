@@ -1,5 +1,7 @@
 'use client'
 import { useState } from 'react'
+import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
 
@@ -33,6 +35,7 @@ export function PostThread({
     }>
   }
 }) {
+  const { data: session } = useSession()
   const [replyBody, setReplyBody] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -55,28 +58,40 @@ export function PostThread({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Reply composer */}
-      <div className="np-card" style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-          <Avatar name="You" size={36} />
-          <textarea
-            className="np-input"
-            rows={3}
-            placeholder="Write a reply…"
-            value={replyBody}
-            onChange={e => setReplyBody(e.target.value)}
-            style={{ resize: 'vertical', fontFamily: 'inherit' }}
-          />
+      {session ? (
+        <div className="np-card" style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+            <Avatar name={(session.user as any)?.name ?? 'You'} size={36} src={(session.user as any)?.image ?? undefined} />
+            <textarea
+              className="np-input"
+              rows={3}
+              placeholder="Write a reply…"
+              value={replyBody}
+              onChange={e => setReplyBody(e.target.value)}
+              style={{ resize: 'vertical', fontFamily: 'inherit' }}
+            />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <button
+              className="np-btn np-btn-primary sm"
+              disabled={!replyBody.trim() || submitting}
+              onClick={handleReply}
+            >
+              {submitting ? 'Posting…' : 'Reply'}
+            </button>
+          </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-          <button
-            className="np-btn np-btn-primary sm"
-            disabled={!replyBody.trim() || submitting}
-            onClick={handleReply}
+      ) : (
+        <div className="np-card" style={{ padding: 16, textAlign: 'center' }}>
+          <p style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--fg-3)' }}>Sign in to join the conversation</p>
+          <Link
+            href={`/signin?callbackUrl=/community/${post.id}`}
+            style={{ display: 'inline-block', padding: '8px 22px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 14, textDecoration: 'none' }}
           >
-            {submitting ? 'Posting…' : 'Reply'}
-          </button>
+            Sign in to reply
+          </Link>
         </div>
-      </div>
+      )}
 
       {/* Replies */}
       {post.replies.map(reply => {

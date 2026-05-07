@@ -16,6 +16,7 @@ export function GeoBar() {
   const [open, setOpen]             = useState(false)
   const [countryHover, setCountryHover] = useState<string | null>(null)
   const [stateHover,   setStateHover]   = useState<string | null>(null)
+  const [cityHover,    setCityHover]    = useState<string | null>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
   const country = searchParams.get('country')
@@ -52,8 +53,8 @@ export function GeoBar() {
     return () => document.removeEventListener('mousedown', handler)
   }, [open, closePanel])
 
-  // Reset state hover when country hover changes
   useEffect(() => { setStateHover(null) }, [countryHover])
+  useEffect(() => { setCityHover(null) }, [stateHover])
 
   const activeCountry = countryHover ?? country ?? null
   const states        = activeCountry ? getStatesForCountry(activeCountry) : []
@@ -221,22 +222,27 @@ export function GeoBar() {
                 >
                   All of {activeCityState}
                 </button>
-                {cities.map(c => (
-                  <button
-                    key={c.city}
-                    onClick={() => go(activeCountry, c.stateName, c.city)}
-                    style={{
-                      display: 'block', width: 'calc(100% - 8px)', margin: '0 4px',
-                      textAlign: 'left', padding: '9px 14px', border: 'none', borderRadius: 8,
-                      background: city === c.city ? 'var(--primary-50)' : 'transparent',
-                      fontSize: 13, fontWeight: city === c.city ? 700 : 400,
-                      color: city === c.city ? 'var(--primary)' : 'var(--fg-1)',
-                      cursor: 'pointer', fontFamily: 'inherit',
-                    }}
-                  >
-                    {c.city}
-                  </button>
-                ))}
+                {cities.map(c => {
+                  const isCityActive = cityHover === c.city || (!cityHover && city === c.city)
+                  return (
+                    <button
+                      key={c.city}
+                      onClick={() => go(activeCountry, c.stateName, c.city)}
+                      onMouseEnter={() => setCityHover(c.city)}
+                      onMouseLeave={() => setCityHover(null)}
+                      style={{
+                        display: 'block', width: 'calc(100% - 8px)', margin: '0 4px',
+                        textAlign: 'left', padding: '9px 14px', border: 'none', borderRadius: 8,
+                        background: isCityActive ? 'var(--primary-50)' : 'transparent',
+                        fontSize: 13, fontWeight: isCityActive ? 700 : 400,
+                        color: isCityActive ? 'var(--primary)' : 'var(--fg-1)',
+                        cursor: 'pointer', fontFamily: 'inherit',
+                      }}
+                    >
+                      {c.city}
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>

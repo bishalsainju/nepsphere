@@ -1,7 +1,10 @@
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, Users } from 'lucide-react'
+import { JobActions } from './JobActions'
 
 const TYPE_LABELS: Record<string, string> = {
   FULL_TIME: 'Full-time', PART_TIME: 'Part-time',
@@ -23,18 +26,25 @@ export default async function JobDetailPage({
   params: Promise<{ jobId: string }>
 }) {
   const { jobId } = await params
+  const session = await getServerSession(authOptions)
+  const viewerId = (session?.user as any)?.id as string | undefined
 
   let job: any = null
+  let applicantCount = 0
   try {
     job = await prisma.job.findUnique({
       where: { id: jobId },
       include: { postedBy: { select: { id: true, name: true } } },
     })
+    if (job && viewerId === job.postedById) {
+      applicantCount = await prisma.jobApplication.count({ where: { jobId } })
+    }
   } catch {
     // DB not connected
   }
 
   if (!job) notFound()
+  const isOwner = viewerId === job.postedById
 
   return (
     <div className="np-subpage">
@@ -77,14 +87,16 @@ export default async function JobDetailPage({
           {job.description}
         </div>
 
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', borderTop: '1px solid var(--border-subtle)', paddingTop: 20 }}>
-          <button className="np-btn np-btn-primary lg" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-            Apply now <ArrowRight size={16} strokeWidth={2} />
-          </button>
-          <button className="np-btn np-btn-secondary">
-            Save job
-          </button>
-        </div>
+        {isOwner ? (
+          <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: 20, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+            <Link href={`/jobs/${jobId}/applicants`} className="np-btn np-btn-primary lg" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <Users size={16} /> View applicants ({applicantCount})
+            </Link>
+            <span style={{ fontSize: 13, color: 'var(--fg-4)' }}>You posted this job.</span>
+          </div>
+        ) : (
+          <JobActions jobId={jobId} jobTitle={job.title} company={job.company} />
+        )}
 
         {job.postedBy && (
           <p style={{ fontSize: 13, color: 'var(--fg-4)', marginTop: 16, marginBottom: 0 }}>

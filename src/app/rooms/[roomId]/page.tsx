@@ -4,6 +4,7 @@ import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
 import Link from 'next/link'
 import { ArrowLeft, CheckCircle } from 'lucide-react'
+import { RoomActions } from './RoomActions'
 
 const TYPE_LABELS: Record<string, string> = {
   PRIVATE: 'Private room', SHARED: 'Shared room',
@@ -100,12 +101,7 @@ export default async function RoomDetailPage({
               </div>
             </div>
 
-            <button className="np-btn np-btn-primary" style={{ width: '100%', justifyContent: 'center', marginBottom: 10, fontSize: 15, padding: '12px 0' }}>
-              Contact host
-            </button>
-            <button className="np-btn np-btn-secondary" style={{ width: '100%', justifyContent: 'center', padding: '10px 0', fontSize: 14 }}>
-              Save listing
-            </button>
+            <RoomActions roomId={roomId} hostName={room.host.name ?? 'Host'} />
 
             <p style={{ fontSize: 12, color: 'var(--fg-4)', textAlign: 'center', marginTop: 14, marginBottom: 0 }}>
               Sign in to keep your community safe.

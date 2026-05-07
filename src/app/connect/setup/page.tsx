@@ -87,7 +87,7 @@ const PREF_GENDERS = [
 ]
 
 const EMPTY_FORM = {
-  intent: '', gender: '', lookingFor: [] as string[],
+  intents: [] as string[], gender: '', lookingFor: [] as string[],
   age: '', height: '', bio: '',
   country: 'USA', state: 'Texas', city: 'Dallas',
   hometown: '', religion: '', caste: '',
@@ -111,7 +111,7 @@ export default function ConnectSetupPage() {
       .then(existing => {
         if (existing) {
           setForm({
-            intent:     existing.intent     ?? '',
+            intents:    Array.isArray(existing.intents) ? existing.intents : (existing.intent ? [existing.intent] : []),
             gender:     existing.gender     ?? '',
             lookingFor: existing.lookingFor ?? [],
             age:        existing.age ? String(existing.age) : '',
@@ -141,7 +141,7 @@ export default function ConnectSetupPage() {
 
   function set(key: string, value: any) { setForm(f => ({ ...f, [key]: value })) }
 
-  function toggleArr(key: 'lookingFor' | 'language', val: string) {
+  function toggleArr(key: 'intents' | 'lookingFor' | 'language', val: string) {
     setForm(f => ({
       ...f,
       [key]: (f[key] as string[]).includes(val)
@@ -153,28 +153,32 @@ export default function ConnectSetupPage() {
   const steps = [
     {
       title: "What are you looking for?",
-      subtitle: "You can change this anytime",
-      valid: !!form.intent,
+      subtitle: "Select all that apply — you can change this anytime",
+      valid: form.intents.length > 0,
       content: (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {INTENTS.map(i => (
-            <button
-              key={i.id}
-              onClick={() => set('intent', i.id)}
-              style={{
-                padding: '18px 20px', borderRadius: 16, textAlign: 'left',
-                border: `2.5px solid ${form.intent === i.id ? INTENT_COLORS[i.id] : 'var(--border)'}`,
-                background: form.intent === i.id ? INTENT_COLORS[i.id] + '12' : 'var(--surface)',
-                cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 16,
-              }}
-            >
-              <span style={{ fontSize: 32 }}>{i.emoji}</span>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--fg-1)' }}>{i.label}</div>
-                <div style={{ fontSize: 13, color: 'var(--fg-3)', marginTop: 2 }}>{i.desc}</div>
-              </div>
-            </button>
-          ))}
+          {INTENTS.map(i => {
+            const selected = form.intents.includes(i.id)
+            return (
+              <button
+                key={i.id}
+                onClick={() => toggleArr('intents', i.id)}
+                style={{
+                  padding: '18px 20px', borderRadius: 16, textAlign: 'left',
+                  border: `2.5px solid ${selected ? INTENT_COLORS[i.id] : 'var(--border)'}`,
+                  background: selected ? INTENT_COLORS[i.id] + '12' : 'var(--surface)',
+                  cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 16,
+                }}
+              >
+                <span style={{ fontSize: 32 }}>{i.emoji}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--fg-1)' }}>{i.label}</div>
+                  <div style={{ fontSize: 13, color: 'var(--fg-3)', marginTop: 2 }}>{i.desc}</div>
+                </div>
+                {selected && <Check size={20} strokeWidth={2.5} style={{ color: INTENT_COLORS[i.id], flexShrink: 0 }} />}
+              </button>
+            )
+          })}
         </div>
       ),
     },
@@ -473,20 +477,18 @@ export default function ConnectSetupPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-        ...form,
-        age: form.age ? parseInt(form.age) : null,
-        prefGender: form.prefGender || null,
-        prefMinAge: form.prefMinAge,
-        prefMaxAge: form.prefMaxAge,
-      }),
+          ...form,
+          intents: form.intents,
+          age: form.age ? parseInt(form.age) : null,
+          prefGender: form.prefGender || null,
+          prefMinAge: form.prefMinAge,
+          prefMaxAge: form.prefMaxAge,
+        }),
       })
-      if (res.status === 401) {
-        setNotSignedIn(true)
-        return
-      }
-      if (!res.ok) throw new Error(await res.text())
-      const saved = await res.json()
-      router.push(`/connect/${saved.userId}`)
+      if (res.status === 401) { setNotSignedIn(true); return }
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error ?? 'Failed to save profile')
+      router.push(`/connect/${data.userId}`)
     } catch (e: any) {
       setError(e.message || 'Failed to save profile')
     } finally {

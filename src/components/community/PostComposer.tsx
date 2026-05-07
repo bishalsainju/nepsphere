@@ -1,5 +1,7 @@
 'use client'
 import { useState } from 'react'
+import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { Avatar } from '@/components/ui/Avatar'
 import { Plus } from 'lucide-react'
 
@@ -10,6 +12,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 }
 
 export function PostComposer({ city }: { city: string }) {
+  const { data: session, status } = useSession()
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
@@ -32,10 +35,24 @@ export function PostComposer({ city }: { city: string }) {
     }
   }
 
+  if (status !== 'authenticated') {
+    return (
+      <div className="np-card" style={{ padding: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
+        <Avatar name="?" size={36} />
+        <div style={{ flex: 1, padding: '10px 14px', borderRadius: 10, background: 'var(--surface-2)', color: 'var(--fg-4)', fontSize: 14 }}>
+          Ask your community a question…
+        </div>
+        <Link href="/signin?callbackUrl=/community" className="np-btn np-btn-primary sm" style={{ textDecoration: 'none' }}>
+          Sign in to post
+        </Link>
+      </div>
+    )
+  }
+
   if (!open) {
     return (
       <div className="np-card" style={{ padding: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <Avatar name="You" size={36} />
+        <Avatar name={(session?.user as any)?.name ?? 'You'} size={36} src={(session?.user as any)?.image ?? undefined} />
         <div
           onClick={() => setOpen(true)}
           style={{ flex: 1, padding: '10px 14px', borderRadius: 10, background: 'var(--surface-2)', color: 'var(--fg-4)', cursor: 'text', fontSize: 14 }}

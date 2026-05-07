@@ -32,7 +32,7 @@ export function ProfileCard({
 }: {
   profile: {
     id: string
-    intent: string
+    intents: string[]
     bio: string | null
     age: number | null
     height: string | null
@@ -42,10 +42,10 @@ export function ProfileCard({
     user: { id: string; name: string | null; image: string | null; isVerified: boolean; city: string | null }
   }
 }) {
-  const color = INTENT_COLORS[profile.intent] ?? '#6B7280'
-  const gradient = INTENT_GRADIENTS[profile.intent] ?? 'linear-gradient(135deg, #F3F4F6, #FFFFFF)'
-  const intentLabel = INTENT_LABELS[profile.intent] ?? profile.intent
-  const avatarIntent = profile.intent.toLowerCase() as AvatarIntent
+  const primaryIntent = (profile.intents ?? [])[0] ?? ''
+  const color = INTENT_COLORS[primaryIntent] ?? '#6B7280'
+  const gradient = INTENT_GRADIENTS[primaryIntent] ?? 'linear-gradient(135deg, #F3F4F6, #FFFFFF)'
+  const avatarIntent = (primaryIntent.toLowerCase() || 'default') as AvatarIntent
   const genderLabel = profile.gender ? GENDER_LABELS[profile.gender] ?? profile.gender : null
 
   return (
@@ -53,13 +53,12 @@ export function ProfileCard({
     <article className="np-card interactive" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Banner */}
       <div style={{ height: 100, background: gradient, position: 'relative' }}>
-        <div style={{
-          position: 'absolute', top: 10, right: 10,
-          background: color, color: 'white',
-          fontSize: 11, fontWeight: 700,
-          padding: '4px 10px', borderRadius: 9999,
-        }}>
-          {intentLabel}
+        <div style={{ position: 'absolute', top: 10, right: 10, display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          {(profile.intents ?? []).map(intId => (
+            <span key={intId} style={{ background: INTENT_COLORS[intId] ?? '#6B7280', color: 'white', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 9999 }}>
+              {INTENT_LABELS[intId] ?? intId}
+            </span>
+          ))}
         </div>
         <div style={{ position: 'absolute', left: '50%', bottom: -28, transform: 'translateX(-50%)' }}>
           <Avatar name={profile.user.name ?? 'NS'} size={56} intent={avatarIntent} src={profile.user.image ?? undefined} />

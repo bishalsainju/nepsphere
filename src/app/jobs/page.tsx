@@ -38,13 +38,18 @@ export default async function JobsPage({
       </div>
 
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, gap: 10, flexWrap: 'wrap' }}>
           <h1 style={{ margin: 0, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, color: 'var(--fg-1)' }}>
             Jobs · {geoLabel}
           </h1>
-          <a href="/jobs/new" className="np-btn np-btn-primary sm">
-            Post a job
-          </a>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <a href="/jobs/profile/setup" className="np-btn np-btn-secondary sm">
+              My job profile
+            </a>
+            <a href="/jobs/new" className="np-btn np-btn-primary sm">
+              Post a job
+            </a>
+          </div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

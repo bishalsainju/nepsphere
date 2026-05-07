@@ -37,7 +37,7 @@ export default async function AdminPage() {
     }),
     prisma.connectProfile.findMany({
       orderBy: { createdAt: 'desc' }, take: 50,
-      select: { id: true, userId: true, intent: true, age: true, gender: true, city: true, hometown: true, religion: true, isVisible: true, createdAt: true, user: { select: { name: true } } },
+      select: { id: true, userId: true, intents: true, age: true, gender: true, city: true, hometown: true, religion: true, isVisible: true, createdAt: true, user: { select: { name: true } } },
     }),
   ])
 

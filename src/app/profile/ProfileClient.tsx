@@ -32,7 +32,7 @@ function timeAgo(date: Date | string) {
 }
 
 function LikerRow({ profile, isMatch }: { profile: any; isMatch: boolean }) {
-  const color = INTENT_COLORS[profile.intent] ?? '#6B7280'
+  const color = INTENT_COLORS[(profile.intents ?? [])[0] ?? ''] ?? '#6B7280'
   const initials = (profile.user.name ?? 'NS').split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -49,12 +49,119 @@ function LikerRow({ profile, isMatch }: { profile: any; isMatch: boolean }) {
         <div style={{ fontSize: 12, color: 'var(--fg-3)', display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 2 }}>
           {profile.age && <span>{profile.age} yrs</span>}
           {profile.city && <span>· {profile.city}</span>}
-          <span style={{ background: color + '15', color, padding: '1px 7px', borderRadius: 9999, fontWeight: 600 }}>{INTENT_LABELS[profile.intent]}</span>
+          {(profile.intents ?? []).map((intId: string) => (
+            <span key={intId} style={{ background: (INTENT_COLORS[intId] ?? '#6B7280') + '15', color: INTENT_COLORS[intId] ?? '#6B7280', padding: '1px 7px', borderRadius: 9999, fontWeight: 600 }}>{INTENT_LABELS[intId] ?? intId}</span>
+          ))}
         </div>
       </div>
       <Link href={`/connect/${profile.userId}`} style={{ flexShrink: 0, padding: '6px 14px', borderRadius: 9999, border: `1.5px solid ${color}`, color, fontWeight: 600, fontSize: 12, textDecoration: 'none' }}>
         View
       </Link>
+    </div>
+  )
+}
+
+function JobRow({ j, badge, badgeColor }: { j: any; badge?: string; badgeColor?: string }) {
+  return (
+    <Link href={`/jobs/${j.id}`} style={{ textDecoration: 'none' }}>
+      <div className="np-card interactive" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', marginBottom: 4 }}>{j.title}</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 12, color: 'var(--fg-4)', alignItems: 'center' }}>
+            <span style={{ fontWeight: 600, color: 'var(--fg-2)' }}>{j.company}</span>
+            <span>·</span>
+            <span style={{ fontWeight: 700, color: '#0EA5E9', background: '#E0F2FE', padding: '1px 7px', borderRadius: 9999, fontSize: 11 }}>{JOB_TYPES[j.type] ?? j.type}</span>
+            <span>·</span>
+            <span>{j.city}</span>
+            {j.sponsorship && <span style={{ fontSize: 11, fontWeight: 700, background: '#D1FAE5', color: '#065F46', padding: '1px 7px', borderRadius: 9999 }}>Visa</span>}
+            {badge && <span style={{ fontSize: 11, fontWeight: 700, background: (badgeColor ?? '#059669') + '18', color: badgeColor ?? '#059669', padding: '1px 7px', borderRadius: 9999 }}>{badge}</span>}
+            <span>·</span>
+            <span>{timeAgo(j.createdAt)}</span>
+          </div>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+function RoomRow({ r }: { r: any }) {
+  return (
+    <Link href={`/rooms/${r.id}`} style={{ textDecoration: 'none' }}>
+      <div className="np-card interactive" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', marginBottom: 4 }}>{r.title}</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 12, color: 'var(--fg-4)', alignItems: 'center' }}>
+            <span style={{ fontWeight: 700, color: 'var(--fg-1)' }}>${r.price}/mo</span>
+            <span>·</span>
+            <span style={{ fontWeight: 700, color: '#EA580C', background: '#FFF7ED', padding: '1px 7px', borderRadius: 9999, fontSize: 11 }}>{ROOM_TYPES[r.type] ?? r.type}</span>
+            <span>·</span>
+            <span>{r.city}</span>
+            <span>·</span>
+            <span style={{ fontWeight: 600, color: r.isAvailable ? '#059669' : 'var(--fg-4)' }}>{r.isAvailable ? 'Available' : 'Unavailable'}</span>
+            <span>·</span>
+            <span>{timeAgo(r.createdAt)}</span>
+          </div>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+function CommunityPostsTab({ initialPosts }: { initialPosts: any[] }) {
+  const [posts, setPosts] = useState(initialPosts)
+
+  async function deletePost(id: string) {
+    if (!confirm('Delete this post?')) return
+    await fetch(`/api/posts/${id}`, { method: 'DELETE' })
+    setPosts(p => p.filter(x => x.id !== id))
+  }
+
+  if (posts.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', padding: '48px 24px', color: 'var(--fg-3)' }}>
+        <div style={{ fontSize: 40, marginBottom: 12 }}>💬</div>
+        <div style={{ fontSize: 15, marginBottom: 16 }}>You haven't posted anything yet.</div>
+        <Link href="/community" style={{ padding: '9px 20px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+          Start a discussion
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {posts.map(p => (
+        <div key={p.id} className="np-card" style={{ padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <Link href={`/community/${p.id}`} style={{ textDecoration: 'none' }}>
+              <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', marginBottom: 4 }}>{p.title}</div>
+            </Link>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 12, color: 'var(--fg-4)', alignItems: 'center' }}>
+              <span style={{ fontWeight: 700, color: '#7C3AED', background: '#EDE9FE', padding: '1px 7px', borderRadius: 9999, fontSize: 11 }}>
+                {CATEGORY_LABELS[p.category] ?? p.category}
+              </span>
+              <span>{p.city}</span>
+              <span>·</span>
+              <span>{p._count.replies} {p._count.replies === 1 ? 'reply' : 'replies'}</span>
+              <span>·</span>
+              <span>{p.likes} likes</span>
+              <span>·</span>
+              <span>{timeAgo(p.createdAt)}</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+            <Link href={`/community/${p.id}`} style={{ padding: '5px 12px', borderRadius: 9999, border: '1px solid var(--border)', fontSize: 12, fontWeight: 600, color: 'var(--fg-2)', textDecoration: 'none' }}>
+              View
+            </Link>
+            <button
+              onClick={() => deletePost(p.id)}
+              style={{ padding: '5px 12px', borderRadius: 9999, border: '1px solid #FCA5A5', background: 'none', fontSize: 12, fontWeight: 600, color: '#EF4444', cursor: 'pointer', fontFamily: 'inherit' }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -71,21 +178,25 @@ function EmptyState({ icon, label, cta, href }: { icon: string; label: string; c
   )
 }
 
-export function ProfileClient({ user, posts, jobs, rooms, connectProfile, connectStats }: {
+export function ProfileClient({ user, posts, jobs, rooms, savedRooms, savedJobs, appliedJobs, connectProfile, connectStats, initialTab }: {
   user: any
   posts: any[]
   jobs: any[]
   rooms: any[]
+  savedRooms: any[]
+  savedJobs: any[]
+  appliedJobs: any[]
   connectProfile: any
   connectStats: { likerProfiles: any[]; matches: any[]; likesReceived: number; unreadMessages: number }
+  initialTab?: Tab
 }) {
-  const [tab, setTab] = useState<Tab>('community')
+  const [tab, setTab] = useState<Tab>(initialTab ?? 'community')
 
   const TABS = [
     { id: 'community' as Tab, label: 'Community', count: posts.length,   icon: MessageSquare, color: '#7C3AED' },
     { id: 'connect'   as Tab, label: 'Connect',   count: connectStats.likesReceived + connectStats.matches.length, icon: Heart, color: '#E31C5F' },
-    { id: 'jobs'      as Tab, label: 'Jobs',       count: jobs.length,    icon: Briefcase,    color: '#0EA5E9' },
-    { id: 'rooms'     as Tab, label: 'Rooms',      count: rooms.length,   icon: Home,         color: '#EA580C' },
+    { id: 'jobs'      as Tab, label: 'Jobs',       count: jobs.length + savedJobs.length + appliedJobs.length, icon: Briefcase, color: '#0EA5E9' },
+    { id: 'rooms'     as Tab, label: 'Rooms',      count: rooms.length + savedRooms.length, icon: Home, color: '#EA580C' },
   ]
 
   const initials = (user.name ?? user.email ?? 'U').split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
@@ -101,7 +212,7 @@ export function ProfileClient({ user, posts, jobs, rooms, connectProfile, connec
         <div className="np-profile-header-body" style={{ padding: '0 24px 20px' }}>
           {/* Avatar */}
           <div style={{ marginTop: -36, marginBottom: 12, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-            <div style={{ width: 72, height: 72, borderRadius: '50%', border: '3px solid var(--surface)', overflow: 'hidden', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 72, height: 72, borderRadius: '50%', boxShadow: '0 0 0 3px var(--surface)', overflow: 'hidden', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               {user.image
                 ? <img src={user.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 : <span style={{ fontSize: 24, fontWeight: 800, color: 'white' }}>{initials}</span>}
@@ -183,33 +294,7 @@ export function ProfileClient({ user, posts, jobs, rooms, connectProfile, connec
 
       {/* ── Community tab ── */}
       {tab === 'community' && (
-        posts.length === 0
-          ? <EmptyState icon="💬" label="You haven't posted anything yet." cta="Start a discussion" href="/community/new" />
-          : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {posts.map(p => (
-                <Link key={p.id} href={`/community/${p.id}`} style={{ textDecoration: 'none' }}>
-                  <div className="np-card interactive" style={{ padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', marginBottom: 4 }}>{p.title}</div>
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 12, color: 'var(--fg-4)', alignItems: 'center' }}>
-                        <span style={{ fontWeight: 700, color: '#7C3AED', background: '#EDE9FE', padding: '1px 7px', borderRadius: 9999, fontSize: 11 }}>
-                          {CATEGORY_LABELS[p.category] ?? p.category}
-                        </span>
-                        <span>{p.city}</span>
-                        <span>·</span>
-                        <span>{p._count.replies} {p._count.replies === 1 ? 'reply' : 'replies'}</span>
-                        <span>·</span>
-                        <span>{p.likes} likes</span>
-                        <span>·</span>
-                        <span>{timeAgo(p.createdAt)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )
+        <CommunityPostsTab initialPosts={posts} />
       )}
 
       {/* ── Connect tab ── */}
@@ -282,18 +367,22 @@ export function ProfileClient({ user, posts, jobs, rooms, connectProfile, connec
             <div className="np-card" style={{ padding: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ background: INTENT_COLORS[connectProfile.intent] + '18', color: INTENT_COLORS[connectProfile.intent], fontWeight: 700, fontSize: 12, padding: '3px 12px', borderRadius: 9999 }}>
-                    {INTENT_LABELS[connectProfile.intent]}
-                  </span>
+                  <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                    {(connectProfile.intents ?? []).map((intId: string) => (
+                      <span key={intId} style={{ background: (INTENT_COLORS[intId] ?? '#6B7280') + '18', color: INTENT_COLORS[intId] ?? '#6B7280', fontWeight: 700, fontSize: 12, padding: '3px 12px', borderRadius: 9999 }}>
+                        {INTENT_LABELS[intId] ?? intId}
+                      </span>
+                    ))}
+                  </div>
                   {connectProfile.isVisible
                     ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#059669' }}><Eye size={12} /> Visible</span>
                     : <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--fg-4)' }}><EyeOff size={12} /> Hidden</span>}
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <Link href={`/connect/${connectProfile.userId}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 9999, border: `1.5px solid ${INTENT_COLORS[connectProfile.intent]}`, color: INTENT_COLORS[connectProfile.intent], fontWeight: 600, fontSize: 12, textDecoration: 'none' }}>
+                  <Link href={`/connect/${connectProfile.userId}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 9999, border: `1.5px solid ${INTENT_COLORS[(connectProfile.intents ?? [])[0] ?? ''] ?? '#6B7280'}`, color: INTENT_COLORS[(connectProfile.intents ?? [])[0] ?? ''] ?? '#6B7280', fontWeight: 600, fontSize: 12, textDecoration: 'none' }}>
                     <Eye size={13} /> View
                   </Link>
-                  <Link href="/connect/setup" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 12, textDecoration: 'none' }}>
+                  <Link href="/connect/edit" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 12, textDecoration: 'none' }}>
                     <Edit size={13} /> Edit
                   </Link>
                 </div>
@@ -311,61 +400,76 @@ export function ProfileClient({ user, posts, jobs, rooms, connectProfile, connec
 
       {/* ── Jobs tab ── */}
       {tab === 'jobs' && (
-        jobs.length === 0
-          ? <EmptyState icon="💼" label="You haven't posted any jobs yet." cta="Post a job" href="/jobs/new" />
-          : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {jobs.map(j => (
-                <Link key={j.id} href={`/jobs/${j.id}`} style={{ textDecoration: 'none' }}>
-                  <div className="np-card interactive" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', marginBottom: 4 }}>{j.title}</div>
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 12, color: 'var(--fg-4)', alignItems: 'center' }}>
-                        <span style={{ fontWeight: 600, color: 'var(--fg-2)' }}>{j.company}</span>
-                        <span>·</span>
-                        <span style={{ fontWeight: 700, color: '#0EA5E9', background: '#E0F2FE', padding: '1px 7px', borderRadius: 9999, fontSize: 11 }}>{JOB_TYPES[j.type] ?? j.type}</span>
-                        <span>·</span>
-                        <span>{j.city}</span>
-                        {j.sponsorship && <span style={{ fontSize: 11, fontWeight: 700, background: '#D1FAE5', color: '#065F46', padding: '1px 7px', borderRadius: 9999 }}>Visa</span>}
-                        <span>·</span>
-                        <span>{timeAgo(j.createdAt)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* Posted jobs */}
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+              Posted by you ({jobs.length})
             </div>
-          )
+            {jobs.length === 0
+              ? <EmptyState icon="💼" label="You haven't posted any jobs yet." cta="Post a job" href="/jobs/new" />
+              : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {jobs.map(j => <JobRow key={j.id} j={j} />)}
+                </div>
+              )}
+          </div>
+
+          {/* Applied jobs */}
+          {appliedJobs.length > 0 && (
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+                Applied ({appliedJobs.length})
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {appliedJobs.map(j => <JobRow key={j.id} j={j} badge="Applied" badgeColor="#059669" />)}
+              </div>
+            </div>
+          )}
+
+          {/* Saved jobs */}
+          {savedJobs.length > 0 && (
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#0EA5E9', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+                Saved ({savedJobs.length})
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {savedJobs.map(j => <JobRow key={j.id} j={j} />)}
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
       {/* ── Rooms tab ── */}
       {tab === 'rooms' && (
-        rooms.length === 0
-          ? <EmptyState icon="🏠" label="You haven't listed any rooms yet." cta="List a room" href="/rooms/new" />
-          : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {rooms.map(r => (
-                <Link key={r.id} href={`/rooms/${r.id}`} style={{ textDecoration: 'none' }}>
-                  <div className="np-card interactive" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--fg-1)', marginBottom: 4 }}>{r.title}</div>
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 12, color: 'var(--fg-4)', alignItems: 'center' }}>
-                        <span style={{ fontWeight: 700, color: 'var(--fg-1)' }}>${r.price}/mo</span>
-                        <span>·</span>
-                        <span style={{ fontWeight: 700, color: '#EA580C', background: '#FFF7ED', padding: '1px 7px', borderRadius: 9999, fontSize: 11 }}>{ROOM_TYPES[r.type] ?? r.type}</span>
-                        <span>·</span>
-                        <span>{r.city}</span>
-                        <span>·</span>
-                        <span style={{ fontWeight: 600, color: r.isAvailable ? '#059669' : 'var(--fg-4)' }}>{r.isAvailable ? 'Available' : 'Unavailable'}</span>
-                        <span>·</span>
-                        <span>{timeAgo(r.createdAt)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* Listed rooms */}
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+              Listed by you ({rooms.length})
             </div>
-          )
+            {rooms.length === 0
+              ? <EmptyState icon="🏠" label="You haven't listed any rooms yet." cta="List a room" href="/rooms/new" />
+              : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {rooms.map(r => <RoomRow key={r.id} r={r} />)}
+                </div>
+              )}
+          </div>
+
+          {/* Saved rooms */}
+          {savedRooms.length > 0 && (
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#EA580C', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+                Saved ({savedRooms.length})
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {savedRooms.map(r => <RoomRow key={r.id} r={r} />)}
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
     </div>

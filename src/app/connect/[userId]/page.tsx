@@ -1,9 +1,12 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, MessageCircle, MapPin } from 'lucide-react'
+import { ArrowLeft, MapPin } from 'lucide-react'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
+import { MessageButton } from '@/components/connect/MessageButton'
 
 const INTENT_COLORS: Record<string, string> = {
   FRIENDSHIP: '#3B82F6', DATING: '#E31C5F', MARRIAGE: '#0E9F6E',
@@ -32,6 +35,13 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 export default async function ConnectProfilePage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params
 
+  const session   = await getServerSession(authOptions)
+  const myUserId  = (session?.user as any)?.id as string | undefined
+  const viewer    = myUserId
+    ? await prisma.user.findUnique({ where: { id: myUserId }, select: { isPremium: true } })
+    : null
+  const isPremium = viewer?.isPremium ?? false
+
   const profile = await prisma.connectProfile.findFirst({
     where: { userId, isVisible: true },
     include: { user: { select: { id: true, name: true, image: true, isVerified: true, city: true } } },
@@ -39,8 +49,9 @@ export default async function ConnectProfilePage({ params }: { params: Promise<{
 
   if (!profile) notFound()
 
-  const color    = INTENT_COLORS[profile.intent]  ?? '#6B7280'
-  const gradient = INTENT_GRADIENTS[profile.intent] ?? 'linear-gradient(160deg,#F3F4F6,#FFFFFF)'
+  const primaryIntent = (profile.intents as string[])?.[0] ?? ''
+  const color    = INTENT_COLORS[primaryIntent]  ?? '#6B7280'
+  const gradient = INTENT_GRADIENTS[primaryIntent] ?? 'linear-gradient(160deg,#F3F4F6,#FFFFFF)'
   const genderLabel = profile.gender ? GENDER_LABELS[profile.gender as string] ?? profile.gender : null
 
   const details: { label: string; value: string }[] = [
@@ -66,11 +77,15 @@ export default async function ConnectProfilePage({ params }: { params: Promise<{
       <div className="np-card" style={{ overflow: 'hidden' }}>
         {/* Banner */}
         <div style={{ height: 200, background: gradient, position: 'relative' }}>
-          <div style={{ position: 'absolute', top: 16, left: 16, background: color, color: 'white', fontSize: 12, fontWeight: 700, padding: '5px 14px', borderRadius: 9999 }}>
-            {INTENT_LABELS[profile.intent]}
+          <div style={{ position: 'absolute', top: 16, left: 16, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {(profile.intents as string[] ?? []).map((intId: string) => (
+              <span key={intId} style={{ background: INTENT_COLORS[intId] ?? '#6B7280', color: 'white', fontSize: 12, fontWeight: 700, padding: '5px 14px', borderRadius: 9999 }}>
+                {INTENT_LABELS[intId] ?? intId}
+              </span>
+            ))}
           </div>
           <div style={{ position: 'absolute', left: '50%', bottom: -44, transform: 'translateX(-50%)' }}>
-            <Avatar name={profile.user.name ?? 'NS'} size={88} intent={profile.intent.toLowerCase() as any} src={profile.user.image ?? undefined} />
+            <Avatar name={profile.user.name ?? 'NS'} size={88} intent={primaryIntent.toLowerCase() as any} src={profile.user.image ?? undefined} />
           </div>
         </div>
 
@@ -144,9 +159,7 @@ export default async function ConnectProfilePage({ params }: { params: Promise<{
 
         {/* CTA */}
         <div style={{ padding: '0 24px 28px', display: 'flex', justifyContent: 'center' }}>
-          <button className="np-btn np-btn-primary lg" style={{ background: color, borderColor: color, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 32px' }}>
-            <MessageCircle size={16} strokeWidth={1.5} /> Send message
-          </button>
+          <MessageButton isPremium={isPremium} color={color} />
         </div>
       </div>
     </div>

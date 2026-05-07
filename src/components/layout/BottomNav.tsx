@@ -1,12 +1,12 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { MessageSquare, Home, HeartHandshake, Briefcase } from 'lucide-react'
+import { Users, Building2, Heart, Briefcase } from 'lucide-react'
 
 const TABS = [
-  { href: '/community', label: 'Community', Icon: MessageSquare },
-  { href: '/rooms',     label: 'Rooms',     Icon: Home },
-  { href: '/connect',   label: 'Connect',   Icon: HeartHandshake },
+  { href: '/community', label: 'Community', Icon: Users },
+  { href: '/rooms',     label: 'Rooms',     Icon: Building2 },
+  { href: '/connect',   label: 'Connect',   Icon: Heart },
   { href: '/jobs',      label: 'Jobs',      Icon: Briefcase },
 ]
 

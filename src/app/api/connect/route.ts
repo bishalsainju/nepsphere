@@ -13,27 +13,27 @@ export async function GET(req: NextRequest) {
   const state    = searchParams.get('state')
   const city     = searchParams.get('city')
   const intent   = searchParams.get('intent')
-  const gender   = searchParams.get('gender')
-  const minAge   = searchParams.get('minAge')
-  const maxAge   = searchParams.get('maxAge')
-  const religion = searchParams.get('religion')
-  const caste    = searchParams.get('caste')
 
   const geoWhere = buildGeoWhere(country, state, city)
 
-  let ageWhere: any = {}
-  if (minAge) ageWhere.gte = parseInt(minAge)
-  if (maxAge) ageWhere.lte = parseInt(maxAge)
+  const myPrefs = myUserId
+    ? await prisma.connectProfile.findUnique({
+        where: { userId: myUserId },
+        select: { prefGender: true, prefMinAge: true, prefMaxAge: true },
+      })
+    : null
+
+  const ageWhere: { gte?: number; lte?: number } = {}
+  if (myPrefs?.prefMinAge != null) ageWhere.gte = myPrefs.prefMinAge
+  if (myPrefs?.prefMaxAge != null) ageWhere.lte = myPrefs.prefMaxAge
 
   const profiles = await prisma.connectProfile.findMany({
     where: {
       isVisible: true,
       ...(myUserId ? { NOT: { userId: myUserId } } : {}),
       ...geoWhere,
-      ...(intent   ? { intent: intent as any } : {}),
-      ...(gender   ? { gender } : {}),
-      ...(religion ? { religion } : {}),
-      ...(caste    ? { caste }    : {}),
+      ...(intent ? { OR: [{ intents: { hasSome: [intent] } }, { intents: { isEmpty: true } }] } : {}),
+      ...(myPrefs?.prefGender ? { gender: myPrefs.prefGender } : {}),
       ...(Object.keys(ageWhere).length ? { age: ageWhere } : {}),
     },
     include: {

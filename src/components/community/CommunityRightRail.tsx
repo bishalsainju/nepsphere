@@ -1,6 +1,37 @@
 import Link from 'next/link'
+import { TrendingUp } from 'lucide-react'
+import { prisma } from '@/lib/prisma'
 
-export function CommunityRightRail({ city }: { city: string }) {
+const CATEGORY_LABELS: Record<string, string> = {
+  VISA: 'Visa', JOBS: 'Jobs', LIFE_ABROAD: 'Life abroad',
+  STUDENT: 'Student', FOOD_CULTURE: 'Food & culture', GENERAL: 'General',
+}
+const CATEGORY_COLORS: Record<string, string> = {
+  VISA: '#0EA5E9', JOBS: '#059669', LIFE_ABROAD: '#7C3AED',
+  STUDENT: '#EA580C', FOOD_CULTURE: '#E31C5F', GENERAL: '#6B7280',
+}
+
+export async function CommunityRightRail({ city }: { city: string }) {
+  let trending: any[] = []
+  let groups: any[]   = []
+
+  try {
+    ;[trending, groups] = await Promise.all([
+      prisma.post.findMany({
+        orderBy: [{ likes: 'desc' }, { createdAt: 'desc' }],
+        take: 5,
+        select: { id: true, title: true, category: true, likes: true, _count: { select: { replies: true } } },
+      }),
+      prisma.communityGroup.findMany({
+        orderBy: { membersCount: 'desc' },
+        take: 3,
+        select: { id: true, name: true, slug: true, emoji: true, membersCount: true },
+      }),
+    ])
+  } catch {
+    // DB unavailable
+  }
+
   return (
     <aside className="np-side">
       <div className="np-card" style={{ padding: 18 }}>
@@ -8,56 +39,72 @@ export function CommunityRightRail({ city }: { city: string }) {
           Welcome to {city}
         </h4>
         <p style={{ margin: 0, fontSize: 13, color: 'var(--fg-2)', lineHeight: 1.5 }}>
-          1,284 verified Nepalis call this city home. Be kind. Stay practical.
+          A trusted space for Nepalis living abroad. Be kind. Stay practical.
         </p>
-        <button
-          className="np-btn np-btn-ghost sm"
-          style={{ marginTop: 10, padding: '6px 0' }}
+        <Link
+          href="/community"
+          style={{ marginTop: 10, display: 'inline-block', fontSize: 13, color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}
         >
           Community guidelines →
-        </button>
+        </Link>
       </div>
 
+      {/* Trending */}
       <div className="np-card" style={{ padding: 18 }}>
-        <h4 style={{ margin: '0 0 12px', fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, color: 'var(--fg-1)' }}>
-          This week
+        <h4 style={{ margin: '0 0 14px', fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, color: 'var(--fg-1)', display: 'flex', alignItems: 'center', gap: 7 }}>
+          <TrendingUp size={16} style={{ color: '#E31C5F' }} /> Trending
         </h4>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {[
-            { title: 'Dashain dinner', meta: 'Sat · Klyde Warren Park', color: 'var(--crimson-500)' },
-            { title: 'F1 students mixer', meta: 'Sun · UTD campus', color: 'var(--saffron-500)' },
-            { title: 'Momos & chai night', meta: 'Fri · Irving Community Center', color: 'var(--emerald-500)' },
-          ].map(ev => (
-            <div key={ev.title} style={{ display: 'flex', gap: 10, alignItems: 'stretch' }}>
-              <div style={{ width: 4, background: ev.color, borderRadius: 2, flexShrink: 0 }} />
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-1)' }}>{ev.title}</div>
-                <div className="np-meta" style={{ fontSize: 12 }}>{ev.meta}</div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {trending.length === 0 ? (
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--fg-4)' }}>No posts yet — be the first!</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {trending.map((post, i) => (
+              <Link key={post.id} href={`/community/${post.id}`} style={{ textDecoration: 'none', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--fg-4)', minWidth: 18, lineHeight: '20px' }}>
+                  {i + 1}
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-1)', lineHeight: 1.35, marginBottom: 3 }}>
+                    {post.title.length > 60 ? post.title.slice(0, 60) + '…' : post.title}
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 11 }}>
+                    <span style={{
+                      background: (CATEGORY_COLORS[post.category] ?? '#6B7280') + '18',
+                      color: CATEGORY_COLORS[post.category] ?? '#6B7280',
+                      fontWeight: 700, padding: '1px 7px', borderRadius: 9999,
+                    }}>
+                      {CATEGORY_LABELS[post.category] ?? post.category}
+                    </span>
+                    <span style={{ color: 'var(--fg-4)' }}>❤ {post.likes}</span>
+                    <span style={{ color: 'var(--fg-4)' }}>· {post._count.replies} replies</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
+      {/* Popular groups */}
       <div className="np-card" style={{ padding: 18 }}>
         <h4 style={{ margin: '0 0 10px', fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, color: 'var(--fg-1)' }}>
           Popular groups
         </h4>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {[
-            { emoji: '🎓', name: 'F1 Students Dallas', members: 412 },
-            { emoji: '🍜', name: 'Foodies DFW', members: 287 },
-            { emoji: '🌸', name: 'Aamaa Group DFW', members: 193 },
-          ].map(g => (
-            <Link key={g.name} href={`/community/groups`} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', padding: '6px 0' }}>
-              <span style={{ fontSize: 20 }}>{g.emoji}</span>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-1)' }}>{g.name}</div>
-                <div className="np-meta" style={{ fontSize: 12 }}>{g.members} members</div>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {groups.length === 0 ? (
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--fg-4)' }}>No groups yet.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {groups.map(g => (
+              <Link key={g.id} href={`/community/groups/${g.slug}`} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', padding: '6px 0' }}>
+                <span style={{ fontSize: 20 }}>{g.emoji ?? '👥'}</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--fg-1)' }}>{g.name}</div>
+                  <div className="np-meta" style={{ fontSize: 12 }}>{g.membersCount} members</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
         <Link href="/community/groups" style={{ display: 'block', marginTop: 10, fontSize: 13, color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
           Browse all groups →
         </Link>

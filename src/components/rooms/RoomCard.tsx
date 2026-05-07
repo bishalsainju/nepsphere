@@ -1,6 +1,8 @@
 'use client'
 import Link from 'next/link'
-import { Star, CheckCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import { Star, CheckCircle, Bookmark, BookmarkCheck } from 'lucide-react'
 
 const ROOM_GRADIENTS = [
   'linear-gradient(135deg, #FED7AA, #FB923C)',
@@ -47,6 +49,36 @@ export function RoomCard({
     host: { id: string; name: string | null; isVerified: boolean }
   }
 }) {
+  const { status } = useSession()
+  const [saved, setSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (status !== 'authenticated') return
+    fetch(`/api/rooms/${room.id}/save`)
+      .then(r => r.json())
+      .then(d => setSaved(d.saved ?? false))
+      .catch(() => {})
+  }, [room.id, status])
+
+  async function toggleSave(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    if (status === 'loading') return
+    if (status === 'unauthenticated') {
+      window.location.href = '/signin?callbackUrl=/rooms/' + room.id
+      return
+    }
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/rooms/${room.id}/save`, { method: 'POST' })
+      const d = await res.json()
+      setSaved(d.saved)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const availDate = new Date(room.availableFrom)
   const availStr = availDate <= new Date()
     ? 'Now'
@@ -93,11 +125,20 @@ export function RoomCard({
           </div>
 
           <div style={{ display: 'flex', gap: 8, marginTop: 'auto', paddingTop: 4 }}>
-            <button className="np-btn np-btn-primary sm" onClick={e => e.preventDefault()}>
+            {/* Contact host — navigates to detail page where full contact form lives */}
+            <span className="np-btn np-btn-primary sm">
               Contact host
-            </button>
-            <button className="np-btn np-btn-secondary sm" onClick={e => e.preventDefault()}>
-              Save
+            </span>
+            <button
+              className="np-btn np-btn-secondary sm"
+              onClick={toggleSave}
+              disabled={saving}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
+            >
+              {saved
+                ? <><BookmarkCheck size={13} style={{ color: 'var(--primary)' }} /> Saved</>
+                : <><Bookmark size={13} /> Save</>
+              }
             </button>
           </div>
         </div>

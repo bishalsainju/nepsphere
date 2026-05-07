@@ -402,9 +402,13 @@ export function AdminClient({ stats, initialUsers, initialPosts, initialJobs, in
                     </Link>
                   </td>
                   <td style={{ padding: '10px 16px' }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 9999, background: c.intent === 'DATING' ? '#FFF1F2' : c.intent === 'MARRIAGE' ? '#ECFDF5' : '#EFF6FF', color: c.intent === 'DATING' ? '#E31C5F' : c.intent === 'MARRIAGE' ? '#0E9F6E' : '#3B82F6' }}>
-                      {c.intent}
-                    </span>
+                    <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+                      {(c.intents ?? []).map((intId: string) => (
+                        <span key={intId} style={{ fontSize: 11, fontWeight: 700, padding: '2px 7px', borderRadius: 9999, background: intId === 'DATING' ? '#FFF1F2' : intId === 'MARRIAGE' ? '#ECFDF5' : '#EFF6FF', color: intId === 'DATING' ? '#E31C5F' : intId === 'MARRIAGE' ? '#0E9F6E' : '#3B82F6' }}>
+                          {intId}
+                        </span>
+                      ))}
+                    </div>
                   </td>
                   <td style={{ padding: '10px 16px', color: 'var(--fg-2)' }}>{c.age ?? '—'}</td>
                   <td style={{ padding: '10px 16px', color: 'var(--fg-3)' }}>{c.city ?? '—'}</td>

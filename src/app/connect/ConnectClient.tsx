@@ -4,9 +4,12 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { IntentPicker } from '@/components/connect/IntentPicker'
 import { VerificationBanner } from '@/components/connect/VerificationBanner'
+import { UpgradeModal } from '@/components/connect/UpgradeModal'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
-import { UserCircle2, SlidersHorizontal, X, Heart, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, RefreshCw } from 'lucide-react'
+import { UserCircle2, X, Heart, RefreshCw, Zap } from 'lucide-react'
+
+const DAILY_SWIPE_LIMIT = 10
 
 const INTENT_COLORS: Record<string, string> = {
   FRIENDSHIP: '#3B82F6', DATING: '#E31C5F', MARRIAGE: '#0E9F6E',
@@ -22,14 +25,6 @@ const INTENT_LABELS: Record<string, string> = {
 const GENDER_LABELS: Record<string, string> = {
   MALE: 'Man', FEMALE: 'Woman', NON_BINARY: 'Non-binary', OTHER: 'Other',
 }
-const GENDERS = [
-  { value: '', label: 'Any gender' },
-  { value: 'MALE', label: 'Men' },
-  { value: 'FEMALE', label: 'Women' },
-  { value: 'NON_BINARY', label: 'Non-binary' },
-]
-const RELIGIONS = ['Hindu', 'Buddhist', 'Kirat', 'Christian', 'Muslim', 'Secular']
-
 function Tag({ children, color }: { children: React.ReactNode; color?: string }) {
   return (
     <span style={{
@@ -45,14 +40,18 @@ function Tag({ children, color }: { children: React.ReactNode; color?: string })
 }
 
 function ProfileCard({
-  profile, animating, swipeOffset = 0,
+  profile, animating, swipeOffset = 0, activeIntent,
 }: {
   profile: any
   animating: 'like' | 'pass' | null
   swipeOffset?: number
+  activeIntent?: string | null
 }) {
-  const color    = INTENT_COLORS[profile.intent]  ?? '#6B7280'
-  const gradient = INTENT_GRADIENTS[profile.intent] ?? 'linear-gradient(160deg,#F3F4F6,#FFFFFF)'
+  const displayIntent = activeIntent && (profile.intents ?? []).includes(activeIntent)
+    ? activeIntent
+    : (profile.intents ?? [])[0] ?? 'GENERAL'
+  const color    = INTENT_COLORS[displayIntent]  ?? '#6B7280'
+  const gradient = INTENT_GRADIENTS[displayIntent] ?? 'linear-gradient(160deg,#F3F4F6,#FFFFFF)'
   const genderLabel = profile.gender ? GENDER_LABELS[profile.gender] ?? profile.gender : null
 
   const isDragging = !animating && swipeOffset !== 0
@@ -105,27 +104,28 @@ function ProfileCard({
       )}
       {/* Banner */}
       <div style={{ height: 200, background: gradient, position: 'relative', flexShrink: 0 }}>
-        <span style={{
-          position: 'absolute', top: 14, left: 14,
-          background: color, color: 'white',
-          fontSize: 11, fontWeight: 700, padding: '4px 12px', borderRadius: 9999,
-        }}>
-          {INTENT_LABELS[profile.intent]}
-        </span>
+        <div style={{ position: 'absolute', top: 14, left: 14, display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+          {(profile.intents ?? []).map((intId: string) => (
+            <span key={intId} style={{
+              background: INTENT_COLORS[intId] ?? '#6B7280', color: 'white',
+              fontSize: 11, fontWeight: 700, padding: '4px 12px', borderRadius: 9999,
+            }}>
+              {INTENT_LABELS[intId] ?? intId}
+            </span>
+          ))}
+        </div>
         <div style={{ position: 'absolute', left: '50%', bottom: -44, transform: 'translateX(-50%)' }}>
-          <Avatar name={profile.user.name ?? 'NS'} size={88} intent={profile.intent.toLowerCase() as any} src={profile.user.image ?? undefined} />
+          <Avatar name={profile.user.name ?? 'NS'} size={88} intent={displayIntent.toLowerCase() as any} src={profile.user.image ?? undefined} />
         </div>
       </div>
 
       {/* Content */}
       <div style={{ padding: '56px 24px 24px', textAlign: 'center' }}>
-        {/* Name */}
         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: 'var(--fg-1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, flexWrap: 'wrap' }}>
           {profile.user.name ?? 'Nepali member'}
           {profile.user.isVerified && <Badge size={16} />}
         </div>
 
-        {/* Key info row */}
         <div style={{ fontSize: 14, color: 'var(--fg-3)', marginTop: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, flexWrap: 'wrap' }}>
           {profile.age && <span style={{ fontWeight: 600, color: 'var(--fg-1)' }}>{profile.age}</span>}
           {profile.age && genderLabel && <span>·</span>}
@@ -134,14 +134,12 @@ function ProfileCard({
           {profile.city && <><span>·</span><span>{profile.city}{profile.state ? `, ${profile.state.slice(0,2)}` : ''}</span></>}
         </div>
 
-        {/* Bio */}
         {profile.bio && (
           <p style={{ fontSize: 14, color: 'var(--fg-2)', lineHeight: 1.65, margin: '14px 0 10px', textAlign: 'left' }}>
             {profile.bio.length > 200 ? profile.bio.slice(0, 200) + '…' : profile.bio}
           </p>
         )}
 
-        {/* Tags */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center', marginTop: 12 }}>
           {profile.hometown && <Tag>🇳🇵 {profile.hometown}</Tag>}
           {profile.religion && <Tag>{profile.religion}</Tag>}
@@ -153,7 +151,6 @@ function ProfileCard({
           ))}
         </div>
 
-        {/* Lifestyle row */}
         {(profile.dietary || profile.drinking || profile.smoking) && (
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 10, flexWrap: 'wrap', fontSize: 12, color: 'var(--fg-3)' }}>
             {profile.dietary   && <span>🍽 {profile.dietary}</span>}
@@ -163,14 +160,12 @@ function ProfileCard({
           </div>
         )}
 
-        {/* Languages */}
         {profile.language?.length > 0 && (
           <div style={{ marginTop: 8, fontSize: 12, color: 'var(--fg-4)' }}>
             🗣 {profile.language.join(' · ')}
           </div>
         )}
 
-        {/* View full profile */}
         <Link
           href={`/connect/${profile.user.id}`}
           style={{
@@ -188,6 +183,48 @@ function ProfileCard({
   )
 }
 
+function UpgradeWall({ onUpgrade }: { onUpgrade: () => void }) {
+  return (
+    <div style={{
+      borderRadius: 24, overflow: 'hidden',
+      background: 'var(--surface)',
+      boxShadow: '0 12px 48px rgba(0,0,0,0.13)',
+      width: '100%',
+      textAlign: 'center',
+      padding: '48px 28px 40px',
+    }}>
+      <div style={{
+        width: 64, height: 64, borderRadius: '50%',
+        background: 'linear-gradient(135deg, #E31C5F, #FF6B9D)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        margin: '0 auto 20px',
+      }}>
+        <Zap size={30} style={{ color: 'white' }} />
+      </div>
+      <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, margin: '0 0 10px', color: 'var(--fg-1)' }}>
+        You&apos;re out of free swipes
+      </h3>
+      <p style={{ fontSize: 14, color: 'var(--fg-3)', margin: '0 0 28px', lineHeight: 1.65 }}>
+        Free accounts get <strong>10 swipes per day</strong>. Come back tomorrow, or upgrade for unlimited swipes and messaging.
+      </p>
+      <button
+        onClick={onUpgrade}
+        style={{
+          padding: '13px 36px', borderRadius: 9999, border: 'none', cursor: 'pointer',
+          background: 'linear-gradient(135deg, #E31C5F, #FF6B9D)',
+          color: 'white', fontWeight: 700, fontSize: 15, fontFamily: 'inherit',
+          boxShadow: '0 4px 20px rgba(227,28,95,0.35)',
+        }}
+      >
+        Upgrade to Premium
+      </button>
+      <p style={{ fontSize: 12, color: 'var(--fg-4)', marginTop: 14 }}>
+        Free swipes reset daily at midnight UTC
+      </p>
+    </div>
+  )
+}
+
 export function ConnectClient() {
   const searchParams = useSearchParams()
   const country = searchParams.get('country')
@@ -197,44 +234,48 @@ export function ConnectClient() {
   const [intent, setIntent]   = useState<string | null>(null)
   const [profiles, setProfiles] = useState<any[]>([])
   const [loading, setLoading]   = useState(false)
-  const [showFilters, setShowFilters] = useState(false)
   const [deck, setDeck]   = useState<any[]>([])
-  const [idx, setIdx]     = useState(0)
   const [liked, setLiked] = useState<Set<string>>(new Set())
   const [passed, setPassed] = useState<Set<string>>(new Set())
   const [animating, setAnimating] = useState<'like' | 'pass' | null>(null)
   const [swipeOffset, setSwipeOffset] = useState(0)
   const touchStartX = useRef<number | null>(null)
-  // undefined = loading, null = no profile, string = has profile
   const [myProfileUserId, setMyProfileUserId] = useState<string | null | undefined>(undefined)
-  const [matchCount,   setMatchCount]   = useState(0)
+  const [matchCount,    setMatchCount]    = useState(0)
   const [receivedLikes, setReceivedLikes] = useState(0)
+
+  // Freemium state
+  const [isPremium,       setIsPremium]       = useState(false)
+  const [swipesUsed,      setSwipesUsed]      = useState(0)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+
+  const swipesRemaining = isPremium ? Infinity : Math.max(0, DAILY_SWIPE_LIMIT - swipesUsed)
+  const limitReached    = !isPremium && swipesUsed >= DAILY_SWIPE_LIMIT
+  const needsProfile    = myProfileUserId === null
+  const swipeBlocked    = needsProfile || limitReached
 
   useEffect(() => {
     fetch('/api/connect/profile')
       .then(r => r.ok ? r.json() : null)
       .then(p => {
         setMyProfileUserId(p?.userId ?? null)
+        if (p?.intents?.length > 0 && !intent) {
+          setIntent(p.intents[0])
+        }
         if (p?.userId) {
-          // Auto-apply saved preferences as initial filter values
-          if (p.prefGender)  setGenderFilter(p.prefGender)
-          if (p.prefMinAge)  setMinAge(p.prefMinAge)
-          if (p.prefMaxAge)  setMaxAge(p.prefMaxAge)
-          // Load match/like stats
           fetch('/api/connect/like')
             .then(r => r.json())
-            .then(d => { setMatchCount(d.matches ?? 0); setReceivedLikes(d.receivedLikes ?? 0) })
+            .then(d => {
+              setMatchCount(d.matches ?? 0)
+              setReceivedLikes(d.receivedLikes ?? 0)
+              setSwipesUsed(d.swipesUsed ?? 0)
+              setIsPremium(d.isPremium ?? false)
+            })
             .catch(() => {})
         }
       })
       .catch(() => setMyProfileUserId(null))
   }, [])
-
-  // Filters
-  const [genderFilter,   setGenderFilter]   = useState('')
-  const [minAge, setMinAge] = useState(18)
-  const [maxAge, setMaxAge] = useState(60)
-  const [religionFilter, setReligionFilter] = useState('')
 
   useEffect(() => {
     if (!intent) return
@@ -245,20 +286,18 @@ export function ConnectClient() {
 
     const params = new URLSearchParams()
     params.set('intent', intent)
-    if (country)       params.set('country', country)
-    if (state)         params.set('state', state)
-    if (city)          params.set('city', city)
-    if (genderFilter)  params.set('gender', genderFilter)
-    if (minAge !== 18) params.set('minAge', String(minAge))
-    if (maxAge !== 60) params.set('maxAge', String(maxAge))
-    if (religionFilter) params.set('religion', religionFilter)
+    if (country) params.set('country', country)
+    if (state)   params.set('state', state)
+    if (city)    params.set('city', city)
 
     fetch(`/api/connect?${params.toString()}`)
       .then(r => r.json())
       .then(data => { setProfiles(Array.isArray(data) ? data : []); setDeck(Array.isArray(data) ? data : []) })
       .catch(() => { setProfiles([]); setDeck([]) })
       .finally(() => setLoading(false))
-  }, [intent, country, state, city, genderFilter, minAge, maxAge, religionFilter])
+  }, [intent, country, state, city, myProfileUserId])
+
+  const [idx, setIdx] = useState(0)
 
   const activeDeck = deck.filter(p => !liked.has(p.id) && !passed.has(p.id))
   const current    = activeDeck[0] ?? null
@@ -267,25 +306,48 @@ export function ConnectClient() {
 
   const doAction = useCallback((action: 'like' | 'pass') => {
     if (!current || animating) return
+
+    if (myProfileUserId === null) {
+      window.location.href = '/connect/setup'
+      return
+    }
+
+    if (limitReached) {
+      setShowUpgradeModal(true)
+      return
+    }
+
     setAnimating(action)
     const profileId = current.id
     const userId    = current.userId
+
     setTimeout(() => {
       if (action === 'like') {
         setLiked(s => new Set([...s, profileId]))
-        fetch('/api/connect/like', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ toUserId: userId }),
-        }).then(r => r.json()).then(d => {
-          if (d.isMatch) setMatchCount(c => c + 1)
-        }).catch(() => {})
       } else {
         setPassed(s => new Set([...s, profileId]))
       }
       setAnimating(null)
     }, 220)
-  }, [current, animating])
+
+    fetch('/api/connect/like', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ toUserId: userId, action }),
+    }).then(r => r.json()).then(d => {
+      if (d.profileRequired) {
+        window.location.href = '/connect/setup'
+        return
+      }
+      if (d.limitReached) {
+        setSwipesUsed(DAILY_SWIPE_LIMIT)
+        setShowUpgradeModal(true)
+        return
+      }
+      setSwipesUsed(d.swipesUsed ?? swipesUsed + 1)
+      if (action === 'like' && d.isMatch) setMatchCount(c => c + 1)
+    }).catch(() => {})
+  }, [current, animating, limitReached, swipesUsed, myProfileUserId])
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -299,12 +361,12 @@ export function ConnectClient() {
   const SWIPE_THRESHOLD = 80
 
   function handleTouchStart(e: React.TouchEvent) {
-    if (animating || !current) return
+    if (animating || !current || swipeBlocked) return
     touchStartX.current = e.touches[0].clientX
   }
 
   function handleTouchMove(e: React.TouchEvent) {
-    if (touchStartX.current === null || animating) return
+    if (touchStartX.current === null || animating || swipeBlocked) return
     const dx = e.touches[0].clientX - touchStartX.current
     setSwipeOffset(dx)
     if (Math.abs(dx) > 8) e.preventDefault()
@@ -326,6 +388,10 @@ export function ConnectClient() {
 
   return (
     <div className="np-page-wrap" style={{ maxWidth: 1100 }}>
+      {showUpgradeModal && (
+        <UpgradeModal reason="swipes" onClose={() => setShowUpgradeModal(false)} />
+      )}
+
       <VerificationBanner />
 
       {/* Top bar */}
@@ -350,22 +416,8 @@ export function ConnectClient() {
         >
           Change
         </button>
-        <button
-          onClick={() => setShowFilters(f => !f)}
-          style={{
-            padding: '8px 14px', borderRadius: 9999, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-            background: showFilters ? 'var(--primary)' : 'var(--surface)',
-            color: showFilters ? 'white' : 'var(--fg-2)',
-            border: `1px solid ${showFilters ? 'var(--primary)' : 'var(--border)'}`,
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-          }}
-        >
-          <SlidersHorizontal size={14} strokeWidth={1.8} />
-          Filters
-          {showFilters ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-        </button>
         <Link
-          href={myProfileUserId ? `/connect/${myProfileUserId}` : '/connect/setup'}
+          href={myProfileUserId ? '/profile?tab=connect' : '/connect/setup'}
           style={{
             marginLeft: 'auto', padding: '8px 18px', borderRadius: 9999,
             background: 'var(--primary)', color: 'white',
@@ -377,63 +429,6 @@ export function ConnectClient() {
           {myProfileUserId ? 'My profile' : 'Create profile'}
         </Link>
       </div>
-
-      {/* Filter panel */}
-      {showFilters && (
-        <div className="np-card" style={{ padding: 20, marginBottom: 20, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 20 }}>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Show me</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {GENDERS.map(g => (
-                <button key={g.value} onClick={() => setGenderFilter(g.value)} style={{
-                  padding: '6px 12px', borderRadius: 9999, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-                  border: `1.5px solid ${genderFilter === g.value ? 'var(--primary)' : 'var(--border)'}`,
-                  background: genderFilter === g.value ? 'var(--primary)' : 'var(--surface)',
-                  color: genderFilter === g.value ? 'white' : 'var(--fg-2)',
-                }}>
-                  {g.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
-              Age: {minAge}–{maxAge}
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--fg-3)' }}>
-                <span style={{ width: 24 }}>Min</span>
-                <input type="range" min={18} max={70} value={minAge} onChange={e => setMinAge(Math.min(+e.target.value, maxAge - 1))} style={{ flex: 1, accentColor: 'var(--primary)' }} />
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--fg-3)' }}>
-                <span style={{ width: 24 }}>Max</span>
-                <input type="range" min={19} max={70} value={maxAge} onChange={e => setMaxAge(Math.max(+e.target.value, minAge + 1))} style={{ flex: 1, accentColor: 'var(--primary)' }} />
-              </div>
-            </div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Religion</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-              <button onClick={() => setReligionFilter('')} style={{
-                padding: '5px 10px', borderRadius: 9999, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-                border: `1.5px solid ${religionFilter === '' ? 'var(--primary)' : 'var(--border)'}`,
-                background: religionFilter === '' ? 'var(--primary)' : 'var(--surface)',
-                color: religionFilter === '' ? 'white' : 'var(--fg-2)',
-              }}>Any</button>
-              {RELIGIONS.map(r => (
-                <button key={r} onClick={() => setReligionFilter(religionFilter === r ? '' : r)} style={{
-                  padding: '5px 10px', borderRadius: 9999, fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-                  border: `1.5px solid ${religionFilter === r ? 'var(--primary)' : 'var(--border)'}`,
-                  background: religionFilter === r ? 'var(--primary)' : 'var(--surface)',
-                  color: religionFilter === r ? 'white' : 'var(--fg-2)',
-                }}>
-                  {r}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Main layout: card stack + stats sidebar */}
       <div className="np-2col-right">
@@ -452,8 +447,32 @@ export function ConnectClient() {
             )}
           </div>
 
+          {needsProfile && (
+            <div style={{
+              padding: '14px 16px', borderRadius: 14, marginBottom: 16,
+              background: 'linear-gradient(135deg, #FFF1F2, #FFE4E6)',
+              border: '1px solid #FECDD3',
+              display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
+            }}>
+              <div style={{ fontSize: 22 }}>💕</div>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg-1)' }}>Create your profile to start swiping</div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginTop: 2 }}>Browse freely — like and pass unlock once your profile is live.</div>
+              </div>
+              <Link href="/connect/setup" style={{
+                padding: '8px 18px', borderRadius: 9999,
+                background: 'var(--primary)', color: 'white',
+                fontWeight: 600, fontSize: 13, textDecoration: 'none',
+              }}>
+                Create profile
+              </Link>
+            </div>
+          )}
+
           {loading ? (
             <div style={{ textAlign: 'center', padding: '80px 0', color: 'var(--fg-3)' }}>Loading profiles…</div>
+          ) : limitReached && activeDeck.length > 0 ? (
+            <UpgradeWall onUpgrade={() => setShowUpgradeModal(true)} />
           ) : activeDeck.length === 0 ? (
             <div className="np-card" style={{ textAlign: 'center', padding: '60px 24px' }}>
               <div style={{ fontSize: 48, marginBottom: 12 }}>
@@ -483,25 +502,23 @@ export function ConnectClient() {
             <div>
               {/* Card stack visual */}
               <div style={{ position: 'relative', marginBottom: 20 }}>
-                {/* Background cards */}
                 {next2 && (
                   <div style={{ position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%) scale(0.92)', width: '92%', opacity: 0.4, pointerEvents: 'none', zIndex: 1 }}>
-                    <div style={{ borderRadius: 24, height: 60, background: INTENT_GRADIENTS[next2.intent] ?? '#F3F4F6' }} />
+                    <div style={{ borderRadius: 24, height: 60, background: INTENT_GRADIENTS[(next2.intents ?? [])[0]] ?? '#F3F4F6' }} />
                   </div>
                 )}
                 {next1 && (
                   <div style={{ position: 'absolute', top: 6, left: '50%', transform: 'translateX(-50%) scale(0.96)', width: '96%', opacity: 0.6, pointerEvents: 'none', zIndex: 2 }}>
-                    <div style={{ borderRadius: 24, height: 60, background: INTENT_GRADIENTS[next1.intent] ?? '#F3F4F6' }} />
+                    <div style={{ borderRadius: 24, height: 60, background: INTENT_GRADIENTS[(next1.intents ?? [])[0]] ?? '#F3F4F6' }} />
                   </div>
                 )}
-                {/* Current card */}
                 <div
                   style={{ position: 'relative', zIndex: 3, touchAction: 'pan-y' }}
                   onTouchStart={handleTouchStart}
                   onTouchMove={handleTouchMove}
                   onTouchEnd={handleTouchEnd}
                 >
-                  <ProfileCard profile={current} animating={animating} swipeOffset={swipeOffset} />
+                  <ProfileCard profile={current} animating={animating} swipeOffset={swipeOffset} activeIntent={intent} />
                 </div>
               </div>
 
@@ -509,14 +526,17 @@ export function ConnectClient() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
                 <button
                   onClick={() => doAction('pass')}
+                  disabled={swipeBlocked}
                   style={{
                     width: 60, height: 60, borderRadius: '50%',
                     background: 'white', border: '2px solid #FDA4AF',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', boxShadow: '0 4px 16px rgba(239,68,68,0.15)',
+                    cursor: swipeBlocked ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 16px rgba(239,68,68,0.15)',
+                    opacity: swipeBlocked ? 0.4 : 1,
                     transition: 'transform 120ms, box-shadow 120ms',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.1)' }}
+                  onMouseEnter={e => { if (!swipeBlocked) (e.currentTarget as HTMLElement).style.transform = 'scale(1.1)' }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)' }}
                 >
                   <X size={26} strokeWidth={2.5} style={{ color: '#EF4444' }} />
@@ -528,14 +548,17 @@ export function ConnectClient() {
 
                 <button
                   onClick={() => doAction('like')}
+                  disabled={swipeBlocked}
                   style={{
                     width: 60, height: 60, borderRadius: '50%',
                     background: 'white', border: '2px solid #86EFAC',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', boxShadow: '0 4px 16px rgba(34,197,94,0.15)',
+                    cursor: swipeBlocked ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 16px rgba(34,197,94,0.15)',
+                    opacity: swipeBlocked ? 0.4 : 1,
                     transition: 'transform 120ms, box-shadow 120ms',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.1)' }}
+                  onMouseEnter={e => { if (!swipeBlocked) (e.currentTarget as HTMLElement).style.transform = 'scale(1.1)' }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)' }}
                 >
                   <Heart size={26} strokeWidth={2} style={{ color: '#22C55E' }} />
@@ -551,7 +574,7 @@ export function ConnectClient() {
         {/* Sidebar */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-          {/* Your profile — top of sidebar */}
+          {/* Your profile */}
           <div className="np-card" style={{ padding: 18 }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>
               Your profile
@@ -565,10 +588,10 @@ export function ConnectClient() {
                   <span style={{ fontSize: 13, color: '#15803D', fontWeight: 600 }}>Your profile is live</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <Link href={`/connect/${myProfileUserId}`} style={{ display: 'block', textAlign: 'center', padding: '9px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+                  <Link href="/profile?tab=connect" style={{ display: 'block', textAlign: 'center', padding: '9px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
                     View my profile
                   </Link>
-                  <Link href="/connect/setup" style={{ display: 'block', textAlign: 'center', padding: '9px', borderRadius: 9999, background: 'transparent', color: 'var(--primary)', fontWeight: 600, fontSize: 13, textDecoration: 'none', border: '1.5px solid var(--primary)' }}>
+                  <Link href="/connect/edit" style={{ display: 'block', textAlign: 'center', padding: '9px', borderRadius: 9999, background: 'transparent', color: 'var(--primary)', fontWeight: 600, fontSize: 13, textDecoration: 'none', border: '1.5px solid var(--primary)' }}>
                     Edit profile
                   </Link>
                 </div>
@@ -581,6 +604,55 @@ export function ConnectClient() {
                 <Link href="/connect/setup" style={{ display: 'block', textAlign: 'center', padding: '9px', borderRadius: 9999, background: 'var(--primary)', color: 'white', fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
                   Create profile
                 </Link>
+              </>
+            )}
+          </div>
+
+          {/* Swipe counter */}
+          <div className="np-card" style={{ padding: 18 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--fg-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>
+              Daily swipes
+            </div>
+            {isPremium ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', background: '#FFF0F6', borderRadius: 10 }}>
+                <Zap size={16} style={{ color: '#E31C5F', flexShrink: 0 }} />
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#E31C5F' }}>Unlimited — Premium</span>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
+                  <span style={{ fontSize: 13, color: 'var(--fg-2)' }}>
+                    <strong style={{ color: limitReached ? '#EF4444' : 'var(--fg-1)' }}>{swipesUsed}</strong>
+                    <span style={{ color: 'var(--fg-4)' }}> / {DAILY_SWIPE_LIMIT}</span>
+                  </span>
+                  <span style={{ fontSize: 12, color: limitReached ? '#EF4444' : 'var(--fg-4)' }}>
+                    {limitReached ? 'Limit reached' : `${swipesRemaining} left`}
+                  </span>
+                </div>
+                {/* Progress bar */}
+                <div style={{ height: 6, borderRadius: 9999, background: 'var(--border)', overflow: 'hidden', marginBottom: 12 }}>
+                  <div style={{
+                    height: '100%', borderRadius: 9999,
+                    width: `${Math.min((swipesUsed / DAILY_SWIPE_LIMIT) * 100, 100)}%`,
+                    background: limitReached
+                      ? '#EF4444'
+                      : swipesUsed >= 7
+                      ? '#F97316'
+                      : '#22C55E',
+                    transition: 'width 0.3s ease',
+                  }} />
+                </div>
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  style={{
+                    width: '100%', padding: '9px', borderRadius: 9999, border: 'none', cursor: 'pointer',
+                    background: 'linear-gradient(135deg, #E31C5F, #FF6B9D)',
+                    color: 'white', fontWeight: 600, fontSize: 13, fontFamily: 'inherit',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  }}
+                >
+                  <Zap size={13} /> Upgrade for unlimited
+                </button>
               </>
             )}
           </div>
@@ -639,9 +711,10 @@ export function ConnectClient() {
               Tips
             </div>
             <ul style={{ margin: 0, padding: '0 0 0 16px', fontSize: 13, color: 'var(--fg-2)', lineHeight: 1.8 }}>
-              <li>Use GeoBar above to filter by city</li>
+              <li>Use GeoBar above to change city</li>
               <li>← → arrow keys to pass/like</li>
               <li>Click a card to see full profile</li>
+              <li>Edit your profile to change who you see</li>
               <li>Hit "Start over" to see passed profiles again</li>
             </ul>
           </div>

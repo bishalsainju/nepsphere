@@ -1,8 +1,19 @@
-import { Avatar } from '@/components/ui/Avatar'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { MessagesGate } from './MessagesGate'
 
-export default function MessagesPage() {
+export default async function MessagesPage() {
+  const session  = await getServerSession(authOptions)
+  const myUserId = (session?.user as any)?.id as string | undefined
+
+  const user = myUserId
+    ? await prisma.user.findUnique({ where: { id: myUserId }, select: { isPremium: true } })
+    : null
+  const isPremium = user?.isPremium ?? false
+
   return (
     <div style={{ maxWidth: 720, margin: '0 auto', padding: 24 }}>
       <Link href="/connect" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14, color: 'var(--fg-3)', textDecoration: 'none', marginBottom: 20 }}>
@@ -13,10 +24,7 @@ export default function MessagesPage() {
         Messages
       </h1>
 
-      <div className="np-card np-empty">
-        <h3>No messages yet.</h3>
-        <p style={{ fontSize: 14, marginTop: 4 }}>Sign in to keep your community safe.</p>
-      </div>
+      <MessagesGate isPremium={isPremium} />
     </div>
   )
 }
