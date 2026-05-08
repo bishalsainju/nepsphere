@@ -158,9 +158,11 @@ export default async function ConnectProfilePage({ params }: { params: Promise<{
         )}
 
         {/* CTA */}
-        <div style={{ padding: '0 24px 28px', display: 'flex', justifyContent: 'center' }}>
-          <MessageButton isPremium={isPremium} color={color} />
-        </div>
+        {myUserId !== userId && (
+          <div style={{ padding: '0 24px 28px', display: 'flex', justifyContent: 'center' }}>
+            <MessageButton isPremium={isPremium} color={color} />
+          </div>
+        )}
       </div>
     </div>
   )
